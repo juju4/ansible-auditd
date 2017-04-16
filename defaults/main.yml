@@ -1,0 +1,16 @@
+---
+
+osquery_process_auditing: false
+
+auditd_log_tmp: true
+auditd_log_etc: true
+## Attention! those three would generate lot of logs. alternatives: sysdig/falco, systemtap, osquery...
+auditd_log_all_execve: false
+auditd_log_all_socket: false
+auditd_log_all_connect: false
+auditd_sensitive_files:
+  - /etc/shadow
+## file must exist
+#  - /data/topsecret.data
+auditd_extra_rules: []
+

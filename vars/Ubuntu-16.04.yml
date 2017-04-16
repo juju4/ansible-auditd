@@ -1,0 +1,5 @@
+---
+
+auditd_pkg: auditd
+
+monit_confdir: /etc/monit/conf-available
