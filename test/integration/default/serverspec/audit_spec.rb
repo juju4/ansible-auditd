@@ -4,7 +4,7 @@ require 'serverspec'
 set :backend, :exec
 
 ## FIXME! no auditd in containers, serverspec container identification?
-describe linux_audit_system, :if => os[:family] == 'redhat' do
+describe linux_audit_system do
   it { should be_running }
   it { should be_enabled }
 end
@@ -15,13 +15,21 @@ end
 #  it { should be_running }
 #  it { should be_enabled }
 #end
+
+describe process("auditd") do
+  its(:user) { should eq "root" }
+end
+
 describe command('auditctl -R /etc/audit/audit.rules') do
   its(:exit_status) { should eq 0 }
+  let(:sudo_options) { '-u root -H' }
 end
 
 describe file('/etc/audit/audit.rules'), :if => os[:family] == 'ubuntu' && os[:release] != '16.04' do
   it { should contain '-w /etc/modprobe.conf -p wa -k modprobe' }
+  it { should contain '-w /etc/audit/ -p wa -k auditconfig' }
 end
 describe file('/etc/audit/rules.d/audit.rules'), :if => os[:family] == 'redhat' do
   it { should contain '-w /etc/modprobe.conf -p wa -k modprobe' }
+  it { should contain '-w /etc/audit/ -p wa -k auditconfig' }
 end
