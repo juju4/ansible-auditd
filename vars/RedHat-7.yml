@@ -1,4 +1,5 @@
 ---
 
 auditd_pkg: audit
+auditd_confdir: /etc/audit/rules.d
 

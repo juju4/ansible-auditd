@@ -1,5 +1,6 @@
 ---
 
 auditd_pkg: auditd
+auditd_confdir: /etc/audit
 
 monit_confdir: /etc/monit/conf.d
