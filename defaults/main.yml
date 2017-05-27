@@ -12,5 +12,14 @@ auditd_sensitive_files:
   - /etc/shadow
 ## file must exist
 #  - /data/topsecret.data
+auditd_log_binaries_exec:
+  - /usr/bin/perl
+  - /usr/bin/python
+  - /usr/bin/ruby
+  - /usr/bin/ruby1.9.1
+  - /usr/bin/ruby2.0
+  - /usr/bin/ruby2.1
+  - /usr/bin/ruby2.2
+  - /usr/bin/ruby2.3
 auditd_extra_rules: []
 

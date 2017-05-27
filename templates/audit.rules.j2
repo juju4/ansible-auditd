@@ -269,13 +269,13 @@
 -a exit,always -F arch=b64 -S listen -k listen_call
 
 # suspicious x86 syscalls
--a exit,always -F arch=b32 -S ioperm -S modify_ldt
--a exit,always -F arch=b64 -S ioperm -S modify_ldt
+-a exit,always -F arch=b32 -S ioperm -S modify_ldt -k suspicious_syscalls
+-a exit,always -F arch=b64 -S ioperm -S modify_ldt -k suspicious_syscalls
 # uncommon and dangerous syscalls
--a exit,always -F arch=b32 -S get_kernel_syms -S ptrace
--a exit,always -F arch=b64 -S get_kernel_syms -S ptrace
--a exit,always -F arch=b32 -S prctl
--a exit,always -F arch=b64 -S prctl
+-a exit,always -F arch=b32 -S get_kernel_syms -S ptrace -k uncommon_syscalls
+-a exit,always -F arch=b64 -S get_kernel_syms -S ptrace -k uncommon_syscalls
+-a exit,always -F arch=b32 -S prctl -k uncommon_syscalls
+-a exit,always -F arch=b64 -S prctl -k uncommon_syscalls
 
 # Monitor administrator access to /home directories
 -a always,exit -F dir=/home/ -F uid=0 -C auid!=obj_uid -k admin_user_home
@@ -286,6 +286,10 @@
 -a exit,always -F arch=b64 -S execve -k execve_call
 
 {% endif %}
+{% if auditd_log_binaries %}
+{% for f in auditd_log_binaries_exec %}
+-w {{ f }} -p x -k binaries_exec
+{% endfor %}
 {% if auditd_log_etc %}
 # Log changes and executions within /etc
 -w /etc/ -p wa -k etc_write
@@ -323,7 +327,7 @@
 {% endif %}
 # Audit access to those files
 {% for f in auditd_sensitive_files %}
--w {{ f }} -p rwxa
+-w {{ f }} -p rwxa -k sensitive_file
 {% endfor %}
 
 {% for r in auditd_extra_rules %}

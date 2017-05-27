@@ -8,4 +8,6 @@
 ## https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Security_Guide/sec-starting_the_audit_service.html
 - name: restart auditd - rhel7
   command: "service auditd restart"
+  environment:
+    PATH: '/usr/sbin:/usr/bin:/sbin:/bin'
   when: not (ansible_virtualization_type is defined and (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")) and (ansible_os_family == "RedHat" and ansible_distribution_version.split('.')[0] == '7')

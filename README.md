@@ -3,6 +3,7 @@
 # Linux auditd ansible role
 
 Ansible role to setup and configure linux auditd
+Possible [visualization with R](https://security-plus-data-science.blogspot.ca/2017/05/audit-record-fields-visualized.html).
 
 ## Requirements & Dependencies
 
