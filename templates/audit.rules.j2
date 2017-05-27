@@ -290,6 +290,7 @@
 {% for f in auditd_log_binaries_exec %}
 -w {{ f }} -p x -k binaries_exec
 {% endfor %}
+{% endif %}
 {% if auditd_log_etc %}
 # Log changes and executions within /etc
 -w /etc/ -p wa -k etc_write
