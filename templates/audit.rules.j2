@@ -286,7 +286,7 @@
 -a exit,always -F arch=b64 -S execve -k execve_call
 
 {% endif %}
-{% if auditd_log_binaries %}
+{% if auditd_log_binaries_exec %}
 {% for f in auditd_log_binaries_exec %}
 -w {{ f }} -p x -k binaries_exec
 {% endfor %}
