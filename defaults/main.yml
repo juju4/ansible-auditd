@@ -23,3 +23,8 @@ auditd_log_binaries_exec:
   - /usr/bin/ruby2.3
 auditd_extra_rules: []
 
+auditd_buffer_size: 32768
+auditd_failure_mode: 1
+## ATTENTION! 2 implies any config changes require a system reboot (man auditctl)
+auditd_enable_flag: 2
+#auditd_enable_flag: 1
