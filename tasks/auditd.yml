@@ -41,6 +41,7 @@
         monit_auditd: true
   when: not (ansible_virtualization_type is defined and (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")) and not osquery_process_auditing
   tags: auditd
+
 - block:
     - name: Disable auditd as osquery present with process auditing configured
       service: name=auditd state=stopped enabled=no
@@ -48,3 +49,4 @@
         monit_auditd: false
   when: osquery_process_auditing
 
+- include: logrotate.yml
