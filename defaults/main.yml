@@ -30,6 +30,15 @@ auditd_exclusion_rules:
   - '-a always,exclude -F msgtype=CRYPTO_KEY_USER'
 # cron jobs
   - '-a never,user -F subj_type=crond_t'
+# VMWare tools
+  - '-a exit,never -F arch=b32 -S fork -F success=0 -F path=/usr/lib/vmware-tools -F subj_type=initrc_t -F exit=-2'
+  - '-a exit,never -F arch=b64 -S fork -F success=0 -F path=/usr/lib/vmware-tools -F subj_type=initrc_t -F exit=-2'
+#  - '-a exit,never -F dir=/path/to/directory'
+#  - '-a exit,never -F path=/path/to/file'
+#  - '-a exit,never -F auid=<UID>'
+
+# This set use 'exe' filter which is available on more recent auditd (RHEL7.3+, Ubuntu Xenial+)
+auditd_exclusion_rules2:
 # uncommon_syscall
   - '-a exit,never -F arch=b64 -S prctl -F exe=/usr/sbin/sshd'
 # admin_user_home
@@ -49,12 +58,7 @@ auditd_exclusion_rules:
   - '-a exit,never -F arch=b64 -F uid=0 -F auid=4294967295 -S execve -F exe=/usr/sbin/sshd'
   - '-a exit,never -F arch=b64 -F uid=0 -F auid=4294967295 -S execve -F exe=/usr/lib64/sa/sadc'
   - '-a exit,never -F arch=b64 -F uid=0 -F auid=4294967295 -S execve -F exe=/usr/libexec/abrt-handle-event'
-# VMWare tools
-  - '-a exit,never -F arch=b32 -S fork -F success=0 -F path=/usr/lib/vmware-tools -F subj_type=initrc_t -F exit=-2'
-  - '-a exit,never -F arch=b64 -S fork -F success=0 -F path=/usr/lib/vmware-tools -F subj_type=initrc_t -F exit=-2'
-#  - '-a exit,never -F dir=/path/to/directory'
-#  - '-a exit,never -F path=/path/to/file'
-#  - '-a exit,never -F auid=<UID>'
+
 # load at the end
 auditd_extra_rules: []
 
