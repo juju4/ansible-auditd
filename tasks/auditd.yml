@@ -19,7 +19,7 @@
         - restart auditd - rhel7
       register: auditdrules
     - name: validate auditd rules
-      command: auditctl -R /etc/audit/audit.rules
+      command: "auditctl -R {{ auditd_confdir }}/audit.rules"
       environment:
         PATH: '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
       when: auditdrules.changed
