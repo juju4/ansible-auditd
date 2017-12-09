@@ -2,6 +2,7 @@
 ## /etc/audit/rules.d/audit.rules
 ## https://cisofy.com/controls/ACCT-9630/
 ## http://www.digrouz.com/mediawiki/index.php?title=(RHEL)_HOWTO_configure_the_auditing_of_the_system_(auditd)
+## https://gist.github.com/Neo23x0/9fe88c0c5979e017a389b90fd19ddfee
 
 ###################
 # Remove any existing rules
@@ -22,6 +23,11 @@
 # 1=printk, print failure message
 # 2=panic, halt system
 -f {{ auditd_failure_mode | default(1) }}
+
+# Exclusion
+{% for r in auditd_exclusion_rules %}
+{{ r }}
+{% endfor %}
 
 ###################
 # Audit the audit logs.
@@ -186,6 +192,18 @@
 -a exit,always -F arch=b64 -F euid=0 -S execve -k rootcmd
 -a exit,always -F arch=b32 -F euid=0 -S execve -k rootcmd
 
+
+###################
+# Log all commands executed by nobody/webserver
+###################
+{% if ansible_os_family == 'RedHat' %}
+-a exit,always -F arch=b64 -F euid=99 -S execve -k nobodycmd
+-a exit,always -F arch=b32 -F euid=99 -S execve -k nobodycmd
+{% else %}
+-a exit,always -F arch=b64 -F euid=65534 -S execve -k nobodycmd
+-a exit,always -F arch=b32 -F euid=65534 -S execve -k nobodycmd
+{% endif %}
+
 ###################
 ## Capture all failures to access on critical elements
 ###################
@@ -204,7 +222,7 @@
 ###################
 -w /bin/su -p x -k priv_esc
 -w /usr/bin/sudo -p x -k priv_esc
--w /etc/sudoers -p rw -k priv_esc
+-w /etc/sudoers -p rwa -k priv_esc
 
 ###################
 # Poweroff/reboot tools
@@ -226,15 +244,18 @@
 -w /var/log/faillog -p wa -k logins
 -w /var/log/lastlog -p wa -k logins
 -w /var/log/tallylog -p wa -k logins
+# Session initiation information
 -w /var/run/utmp -p wa -k session
 -w /var/log/wtmp -p wa -k session
 -w /var/log/btmp -p wa -k session
 -w /etc/selinux/ -p wa -k MAC-policy
 -w /etc/sudoers -p wa -k scope
 -w /var/log/sudo.log -p wa -k actions
+# Kernel modules
 -w /sbin/insmod -p x -k modules
 -w /sbin/rmmod -px -k modules
 -w /sbin/modprobe -p x -k modules
+-a always,exit -F arch=b64 -S init_module -S delete_module -k modules
 # 8.1.6,10,11,13,14,17.1 Record Events That Modify the System's Network Environment
 -a exit,always -F arch=b64 -S sethostname -S setdomainname -k system-locale
 -a exit,always -F arch=b32 -S sethostname -S setdomainname -k system-locale
@@ -242,6 +263,7 @@
 -w /etc/issue.net -p wa -k system-locale
 -w /etc/hosts -p wa -k system-locale
 -w /etc/network -p wa -k system-locale
+# Discretionary Access Control (DAC) modifications
 -a always,exit -F arch=b64 -S chmod -S fchmod -S fchmodat -F auid>=500 -F auid!=4294967295 -k perm_mod
 -a always,exit -F arch=b32 -S chmod -S fchmod -S fchmodat -F auid>=500 -F auid!=4294967295 -k perm_mod
 -a always,exit -F arch=b64 -S chown -S fchown -S fchownat -S lchown -F auid>=500 -F auid!=4294967295 -k perm_mod
@@ -254,9 +276,9 @@
 -a always,exit -F arch=b32 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EPERM -F auid>=500 -F auid!=4294967295 -k access
 -a always,exit -F arch=b64 -S mount -F auid>=500 -F auid!=4294967295 -k mounts
 -a always,exit -F arch=b32 -S mount -F auid>=500 -F auid!=4294967295 -k mounts
+# File Deletion Events by User
 -a always,exit -F arch=b64 -S unlink -S unlinkat -S rename -S renameat -F auid>=500 -F auid!=4294967295 -k delete
 -a always,exit -F arch=b32 -S unlink -S unlinkat -S rename -S renameat -F auid>=500 -F auid!=4294967295 -k delete
--a always,exit -F arch=b64 -S init_module -S delete_module -k modules
 
 ## extra
 ## https://slack.engineering/syscall-auditing-at-scale-e6a3ca8ac1b8
@@ -279,6 +301,13 @@
 
 # Monitor administrator access to /home directories
 -a always,exit -F dir=/home/ -F uid=0 -C auid!=obj_uid -k admin_user_home
+
+# 32bit API Exploitation
+## If you are on a 64 bit platform, everything _should_ be running
+## in 64 bit mode. This rule will detect any use of the 32 bit syscalls
+## because this might be a sign of someone exploiting a hole in the 32
+## bit API.
+-a always,exit -F arch=b32 -S all -k 32bit_api
 
 {% if auditd_log_all_execve %}
 # Log all executed commands (larger than just root, above)
@@ -331,6 +360,16 @@
 -w {{ f }} -p rwxa -k sensitive_file
 {% endfor %}
 
+# Audit sigkill usage
+# http://unixadminschool.com/blog/2014/06/linux-admin-reference-configuring-auditd-in-redhat-enterprise-linux/
+-a exit,always -F arch=b64 -S kill -k sigkill
+-a exit,always -F arch=b32 -S kill -k sigkill
+-a exit,always -F arch=b64 -S tkill -k sigkill
+-a exit,always -F arch=b32 -S tkill -k sigkill
+-a exit,always -F arch=b64 -S tgkill -k sigkill
+-a exit,always -F arch=b32 -S tgkill -k sigkill
+
+# Extra rules
 {% for r in auditd_extra_rules %}
 {{ r }}
 {% endfor %}
