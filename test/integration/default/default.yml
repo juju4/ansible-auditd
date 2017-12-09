@@ -2,8 +2,8 @@
 
 - hosts: all
 #- hosts: test-kitchen
-#  vars:
-#    - a:
+  vars:
+    - auditd_exclusion_rules2: []
   roles:
     - juju4.auditd
 
