@@ -1,5 +1,10 @@
 ---
 
+- name: Ensure logrotate package is present
+  package:
+    name: logrotate
+    state: present
+
 - name: add logrotate configuration for audispd log
   template:
     src: logrotate-audispd.j2
