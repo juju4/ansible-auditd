@@ -314,6 +314,30 @@
 ## bit API.
 -a always,exit -F arch=b32 -S all -k 32bit_api
 
+## Injection
+### These rules watch for code injection by the ptrace facility.
+### This could indicate someone trying to do something bad or just debugging
+-a always,exit -F arch=b32 -S ptrace -k tracing
+-a always,exit -F arch=b64 -S ptrace -k tracing
+-a always,exit -F arch=b32 -S ptrace -F a0=0x4 -k code_injection
+-a always,exit -F arch=b64 -S ptrace -F a0=0x4 -k code_injection
+-a always,exit -F arch=b32 -S ptrace -F a0=0x5 -k data_injection
+-a always,exit -F arch=b64 -S ptrace -F a0=0x5 -k data_injection
+-a always,exit -F arch=b32 -S ptrace -F a0=0x6 -k register_injection
+-a always,exit -F arch=b64 -S ptrace -F a0=0x6 -k register_injection
+
+### Unsuccessful Creation
+-a always,exit -F arch=b32 -S creat,link,mknod,mkdir,symlink,mknodat,linkat,symlinkat -F exit=-EACCES -k file_creation
+-a always,exit -F arch=b64 -S mkdir,creat,link,symlink,mknod,mknodat,linkat,symlinkat -F exit=-EACCES -k file_creation
+-a always,exit -F arch=b32 -S link,mkdir,symlink,mkdirat -F exit=-EPERM -k file_creation
+-a always,exit -F arch=b64 -S mkdir,link,symlink,mkdirat -F exit=-EPERM -k file_creation
+
+### Unsuccessful Modification
+-a always,exit -F arch=b32 -S rename -S renameat -S truncate -S chmod -S setxattr -S lsetxattr -S removexattr -S lremovexattr -F exit=-EACCES -k file_modification
+-a always,exit -F arch=b64 -S rename -S renameat -S truncate -S chmod -S setxattr -S lsetxattr -S removexattr -S lremovexattr -F exit=-EACCES -k file_modification
+-a always,exit -F arch=b32 -S rename -S renameat -S truncate -S chmod -S setxattr -S lsetxattr -S removexattr -S lremovexattr -F exit=-EPERM -k file_modification
+-a always,exit -F arch=b64 -S rename -S renameat -S truncate -S chmod -S setxattr -S lsetxattr -S removexattr -S lremovexattr -F exit=-EPERM -k file_modification
+
 {% if auditd_log_all_execve %}
 # Log all executed commands (larger than just root, above)
 -a exit,always -F arch=b32 -S execve -k execve_call
