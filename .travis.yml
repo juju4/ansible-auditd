@@ -37,3 +37,4 @@ script:
 
   - sudo ls /etc/audit/rules.d
   - sudo cat /etc/audit/audit.rules
+  - sudo auditctl -l
