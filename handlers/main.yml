@@ -1,5 +1,9 @@
 ---
 
+- name: augenrules - debian
+  command: augenrules
+  when: ansible_os_family == "Debian"
+
 - name: restart auditd
   service: name=auditd state=restarted
   when: not (ansible_virtualization_type is defined and (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")) and not (ansible_os_family == "RedHat" and ansible_distribution_version.split('.')[0] == '7')

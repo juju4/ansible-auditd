@@ -14,6 +14,7 @@
         backup: yes
       with_items: "{{ auditd_rules_templates }}"
       notify:
+        - augenrules - debian
         - restart auditd
         - restart auditd - rhel7
 
