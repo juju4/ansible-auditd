@@ -1,0 +1,26 @@
+## {{ ansible_managed }}
+## /etc/audit/rules.d/audit.rules
+## https://cisofy.com/controls/ACCT-9630/
+## http://www.digrouz.com/mediawiki/index.php?title=(RHEL)_HOWTO_configure_the_auditing_of_the_system_(auditd)
+## https://gist.github.com/Neo23x0/9fe88c0c5979e017a389b90fd19ddfee
+
+###################
+# Remove any existing rules
+###################
+
+-D
+
+###################
+# Buffer Size
+###################
+# Might need to be increased, depending on the load of your system.
+-b {{ auditd_buffer_size | default(32768) }}
+
+###################
+# Failure Mode
+###################
+# 0=Silent
+# 1=printk, print failure message
+# 2=panic, halt system
+-f {{ auditd_failure_mode | default(1) }}
+

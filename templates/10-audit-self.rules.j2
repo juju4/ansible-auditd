@@ -1,0 +1,20 @@
+###################
+# Audit the audit logs.
+###################
+-w /var/log/audit/ -k auditlog
+
+###################
+## Auditd configuration
+###################
+## Modifications to audit configuration that occur while the audit (check your paths)
+-w /etc/audit/ -p wa -k auditconfig
+-w /etc/libaudit.conf -p wa -k auditconfig
+-w /etc/audisp/ -p wa -k audispconfig
+
+###################
+# Monitor for use of audit management tools
+###################
+# Check your paths
+-w /sbin/auditctl -p x -k audittools
+-w /sbin/auditd -p x -k audittools
+

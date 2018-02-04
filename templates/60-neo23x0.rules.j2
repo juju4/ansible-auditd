@@ -1,0 +1,55 @@
+# 32bit API Exploitation
+## If you are on a 64 bit platform, everything _should_ be running
+## in 64 bit mode. This rule will detect any use of the 32 bit syscalls
+## because this might be a sign of someone exploiting a hole in the 32
+## bit API.
+-a always,exit -F arch=b32 -S all -k 32bit_api
+
+## Reconnaissance
+-w /usr/bin/whoami -p x -k recon
+-w /etc/issue -p r -k recon
+-w /etc/hostname -p r -k recon
+
+## Suspicious activity
+-w /usr/bin/wget -p x -k susp_activity
+-w /usr/bin/curl -p x -k susp_activity
+-w /usr/bin/base64 -p x -k susp_activity
+-w /bin/nc -p x -k susp_activity
+-w /bin/netcat -p x -k susp_activity
+-w /usr/bin/ncat -p x -k susp_activity
+-w /usr/bin/ssh -p x -k susp_activity
+-w /usr/bin/socat -p x -k susp_activity
+-w /usr/bin/wireshark -p x -k susp_activity
+-w /usr/bin/rawshark -p x -k susp_activity
+-w /usr/bin/rdesktop -p x -k sbin_susp
+
+## Sbin suspicious activity
+-w /sbin/iptables -p x -k sbin_susp 
+-w /sbin/ifconfig -p x -k sbin_susp
+-w /usr/sbin/tcpdump -p x -k sbin_susp
+-w /usr/sbin/traceroute -p x -k sbin_susp
+
+## Injection
+### These rules watch for code injection by the ptrace facility.
+### This could indicate someone trying to do something bad or just debugging
+-a always,exit -F arch=b32 -S ptrace -k tracing
+-a always,exit -F arch=b64 -S ptrace -k tracing
+-a always,exit -F arch=b32 -S ptrace -F a0=0x4 -k code_injection
+-a always,exit -F arch=b64 -S ptrace -F a0=0x4 -k code_injection
+-a always,exit -F arch=b32 -S ptrace -F a0=0x5 -k data_injection
+-a always,exit -F arch=b64 -S ptrace -F a0=0x5 -k data_injection
+-a always,exit -F arch=b32 -S ptrace -F a0=0x6 -k register_injection
+-a always,exit -F arch=b64 -S ptrace -F a0=0x6 -k register_injection
+
+### Unsuccessful Creation
+-a always,exit -F arch=b32 -S creat -S link -S mknod -S mkdir -S symlink -S mknodat -S linkat -S symlinkat -F exit=-EACCES -k file_creation
+-a always,exit -F arch=b64 -S creat -S link -S mknod -S mkdir -S symlink -S mknodat -S linkat -S symlinkat -F exit=-EACCES -k file_creation
+-a always,exit -F arch=b32 -S link -S mkdir -S symlink -S mkdirat -F exit=-EPERM -k file_creation
+-a always,exit -F arch=b64 -S link -S mkdir -S symlink -S mkdirat -F exit=-EPERM -k file_creation
+
+### Unsuccessful Modification
+-a always,exit -F arch=b32 -S rename -S renameat -S truncate -S chmod -S setxattr -S lsetxattr -S removexattr -S lremovexattr -F exit=-EACCES -k file_modification
+-a always,exit -F arch=b64 -S rename -S renameat -S truncate -S chmod -S setxattr -S lsetxattr -S removexattr -S lremovexattr -F exit=-EACCES -k file_modification
+-a always,exit -F arch=b32 -S rename -S renameat -S truncate -S chmod -S setxattr -S lsetxattr -S removexattr -S lremovexattr -F exit=-EPERM -k file_modification
+-a always,exit -F arch=b64 -S rename -S renameat -S truncate -S chmod -S setxattr -S lsetxattr -S removexattr -S lremovexattr -F exit=-EPERM -k file_modification
+

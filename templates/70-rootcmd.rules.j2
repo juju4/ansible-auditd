@@ -1,0 +1,10 @@
+###################
+# Log all commands executed by root
+###################
+{% if auditd_rule_rootcmd_all %}
+-a exit,always -F arch=b64 -F euid=0 -S execve -k rootcmd
+-a exit,always -F arch=b32 -F euid=0 -S execve -k rootcmd
+{% else %}
+-a exit,always -F arch=b64 -F euid=0 -S execve -F auid!=4294967295 -k rootcmd
+-a exit,always -F arch=b32 -F euid=0 -S execve -F auid!=4294967295 -k rootcmd
+{% endif %}

@@ -1,0 +1,87 @@
+## extra
+## https://slack.engineering/syscall-auditing-at-scale-e6a3ca8ac1b8
+## Audit any network listen (should include bind())
+## https://stackoverflow.com/questions/27014955/socket-connect-vs-bind
+## https://www.redhat.com/archives/linux-audit/2015-January/msg00057.html
+#?-a exit,always -F arch=b32 -S socketcall -k listen_call
+## FIXME! some system: 'Syscall name unknown: listen'
+#-a exit,always -F arch=b32 -S listen -k listen_call
+-a exit,always -F arch=b64 -S listen -k listen_call
+
+# suspicious x86 syscalls
+-a exit,always -F arch=b32 -S ioperm -S modify_ldt -k suspicious_syscalls
+-a exit,always -F arch=b64 -S ioperm -S modify_ldt -k suspicious_syscalls
+# uncommon and dangerous syscalls
+-a exit,always -F arch=b32 -S get_kernel_syms -S ptrace -k uncommon_syscalls
+-a exit,always -F arch=b64 -S get_kernel_syms -S ptrace -k uncommon_syscalls
+-a exit,always -F arch=b32 -S prctl -k uncommon_syscalls
+-a exit,always -F arch=b64 -S prctl -k uncommon_syscalls
+
+# Monitor administrator access to /home directories
+-a always,exit -F dir=/home/ -F uid=0 -C auid!=obj_uid -k admin_user_home
+
+{% if auditd_log_all_execve %}
+# Log all executed commands (larger than just root, above)
+-a exit,always -F arch=b32 -S execve -k execve_call
+-a exit,always -F arch=b64 -S execve -k execve_call
+
+{% endif %}
+{% if auditd_log_binaries_exec %}
+{% for f in auditd_log_binaries_exec %}
+-w {{ f }} -p x -k binaries_exec
+{% endfor %}
+{% endif %}
+{% if auditd_log_etc %}
+# Log changes and executions within /etc
+-w /etc/ -p wa -k etc_write
+-w /etc/ -p x -k etc_exec
+
+{% endif %}
+{% if auditd_log_tmp %}
+# Log changes and executions within /tmp
+-w /tmp/ -p wa -k tmp_write
+-w /tmp/ -p x -k tmp_exec
+
+{% endif %}
+{% if auditd_log_all_connect %}
+# Log all connect (should include socket()) = 'Syscall name unknown: connect'
+#-a exit,always -F arch=b32 -S connect -k connect_call
+#-a exit,always -F arch=b64 -S connect -k connect_call
+
+{% endif %}
+{% if auditd_log_all_socket %}
+# Log sockets, only the one succeeding
+#-a exit,always -F arch=b64 -F success=1 -S socket -k socket_call
+# socket(PF_INET, SOCK_STREAM, x) (ipv4/tcp)
+#-a exit,always -F arch=b32 -a0=2 -F a1=1 -S socket -k socket_call_ipv4_tcp
+#-a exit,always -F arch=b64 -a0=2 -F a1=1 -S socket -k socket_call_ipv4_tcp
+# socket(PF_INET, SOCK_DGRAM, x) (ipv4/udp)
+#-a exit,always -F arch=b32 -a0=2 -F a1=2 -S socket -k socket_call_ipv4_udp
+#-a exit,always -F arch=b64 -a0=2 -F a1=2 -S socket -k socket_call_ipv4_udp
+# socket(PF_INET6, SOCK_STREAM, x) (ipv6/tcp)
+#-a exit,always -F arch=b32 -a0=10 -F a1=1 -S socket -k socket_call_ipv6_tcp
+#-a exit,always -F arch=b64 -a0=10 -F a1=1 -S socket -k socket_call_ipv6_tcp
+# socket(PF_INET6, SOCK_DGRAM, x) (ipv6/udp)
+#-a exit,always -F arch=b32 -a0=10 -F a1=2 -S socket -k socket_call_ipv6_udp
+#-a exit,always -F arch=b64 -a0=10 -F a1=2 -S socket -k socket_call_ipv6_udp
+
+{% endif %}
+# Audit access to those files
+{% for f in auditd_sensitive_files %}
+-w {{ f }} -p rwxa -k sensitive_file
+{% endfor %}
+
+# Audit sigkill usage
+# http://unixadminschool.com/blog/2014/06/linux-admin-reference-configuring-auditd-in-redhat-enterprise-linux/
+-a exit,always -F arch=b64 -S kill -k sigkill
+-a exit,always -F arch=b32 -S kill -k sigkill
+-a exit,always -F arch=b64 -S tkill -k sigkill
+-a exit,always -F arch=b32 -S tkill -k sigkill
+-a exit,always -F arch=b64 -S tgkill -k sigkill
+-a exit,always -F arch=b32 -S tgkill -k sigkill
+
+# Extra rules
+{% for r in auditd_extra_rules %}
+{{ r }}
+{% endfor %}
+
