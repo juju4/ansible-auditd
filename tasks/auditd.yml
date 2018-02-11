@@ -9,6 +9,8 @@
     - name: retrieve suid/sgid files list
       command: find / -perm /u=s,g=s -type f
       register: sugid_files
+      ignore_errors: true
+      changed_when: false
 
     - name: configure audit system
       template:
