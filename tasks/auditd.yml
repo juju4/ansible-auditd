@@ -6,6 +6,10 @@
     - name: ensure auditd package is present
       package: name={{ auditd_pkg }} state=present update_cache=yes
 
+    - name: retrieve suid/sgid files list
+      command: find / -perm /u=s,g=s -type f 2>/dev/null
+      register: sugid_files
+
     - name: configure audit system
       template:
         src: "{{ item }}.rules.j2"
