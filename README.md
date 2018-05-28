@@ -10,10 +10,11 @@ Possible [visualization with R](https://security-plus-data-science.blogspot.ca/2
 ### Ansible
 It was tested on the following versions:
  * 2.2
+ * 2.5
 
 ### Operating systems
 
-Ubuntu 14.04, 16.04 and Centos7
+Ubuntu 14.04, 16.04, 18.04 and Centos7
 
 ## Example Playbook
 
