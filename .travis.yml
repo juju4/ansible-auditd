@@ -11,13 +11,13 @@ before_install:
 ## for local travis execution as we use same default.yml than kitchen
  - mkdir /tmp/kitchen
 ## serverspec test
- - sudo apt-get install -qq ruby2.0 rake
- - sudo gem2.0 install serverspec
+# - sudo apt-get install -qq ruby2.0 rake
+# - sudo gem2.0 install serverspec
 install:
   - pip install ansible
   - ansible --version
   - "{ echo '[defaults]'; echo 'roles_path = ../'; } >> ansible.cfg"
-  - gem2.0 --version
+#  - gem2.0 --version
 script:
   - "echo \"[test-kitchen]\nlocalhost\" > inventory"
 
