@@ -25,21 +25,27 @@
 -w /etc/issue.net -p wa -k system-locale
 -w /etc/hosts -p wa -k system-locale
 -w /etc/network -p wa -k system-locale
+{% if ansible_os_family == "RedHat" %}
+-w /etc/sysconfig/network -p wa -k system-locale
+-w /etc/sysconfig/network-scripts/ -p wa -k system-locale
 
 # CIS 4.1.7
 -w /etc/selinux/ -p wa -k MAC-policy
-#-w /usr/share/selinux/ -p wa -k MAC-policy
+-w /usr/share/selinux/ -p wa -k MAC-policy
+{% endif %}
 
 # CIS 4.1.8
 -w /var/log/faillog -p wa -k logins
-#-w /var/run/faillock -p wa -k logins
+{% if ansible_os_family == "RedHat" %}
+-w /var/run/faillock -p wa -k logins
+{% endif %}
 -w /var/log/lastlog -p wa -k logins
 -w /var/log/tallylog -p wa -k logins
 
 # CIS 4.1.9 Session initiation information
 -w /var/run/utmp -p wa -k session
--w /var/log/wtmp -p wa -k session
--w /var/log/btmp -p wa -k session
+-w /var/log/wtmp -p wa -k logins
+-w /var/log/btmp -p wa -k logins
 
 # CIS 4.1.10 Discretionary Access Control (DAC) modifications
 -a always,exit -F arch=b64 -S chmod -S fchmod -S fchmodat -F auid>=500 -F auid!=4294967295 -k perm_mod
@@ -48,15 +54,15 @@
 -a always,exit -F arch=b32 -S chown -S fchown -S fchownat -S lchown -F auid>=500 -F auid!=4294967295 -k perm_mod
 -a always,exit -F arch=b64 -S setxattr -S lsetxattr -S fsetxattr -S removexattr -S lremovexattr -S fremovexattr -F auid>=500 -F auid!=4294967295 -k perm_mod
 -a always,exit -F arch=b32 -S setxattr -S lsetxattr -S fsetxattr -S removexattr -S lremovexattr -S fremovexattr -F auid>=500 -F auid!=4294967295 -k perm_mod
--a always,exit -F arch=b64 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EACCES -F auid>=500 -F auid!=4294967295 -k access
--a always,exit -F arch=b32 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EACCES -F auid>=500 -F auid!=4294967295 -k access
--a always,exit -F arch=b64 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EPERM -F auid>=500 -F auid!=4294967295 -k access
--a always,exit -F arch=b32 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EPERM -F auid>=500 -F auid!=4294967295 -k access
 
 # CIS 4.1.11
 ###################
 ## Capture all failures to access on critical elements
 ###################
+-a always,exit -F arch=b64 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EACCES -F auid>=500 -F auid!=4294967295 -k access
+-a always,exit -F arch=b32 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EACCES -F auid>=500 -F auid!=4294967295 -k access
+-a always,exit -F arch=b64 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EPERM -F auid>=500 -F auid!=4294967295 -k access
+-a always,exit -F arch=b32 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EPERM -F auid>=500 -F auid!=4294967295 -k access
 -a exit,always -F arch=b64 -S open -F dir=/etc -F success=0 -k unauthedfileacess
 -a exit,always -F arch=b64 -S open -F dir=/bin -F success=0 -k unauthedfileacess
 -a exit,always -F arch=b64 -S open -F dir=/home -F success=0 -k unauthedfileacess
@@ -83,6 +89,7 @@
 
 # CIS 4.1.15
 -w /etc/sudoers -p wa -k scope
+-w /etc/sudoers.d/ -p wa -k scope
 
 # CIS 4.1.16
 -w /var/log/sudo.log -p wa -k actions

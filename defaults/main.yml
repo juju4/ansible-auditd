@@ -47,6 +47,7 @@ auditd_exclusion_rules:
 # VMWare tools
   - '-a exit,never -F arch=b32 -S fork -F success=0 -F path=/usr/lib/vmware-tools -F subj_type=initrc_t -F exit=-2'
   - '-a exit,never -F arch=b64 -S fork -F success=0 -F path=/usr/lib/vmware-tools -F subj_type=initrc_t -F exit=-2'
+  - '-a exit,never -F dir=/var/lock/lvm'
 #  - '-a exit,never -F dir=/path/to/directory'
 #  - '-a exit,never -F path=/path/to/file'
 #  - '-a exit,never -F auid=<UID>'
