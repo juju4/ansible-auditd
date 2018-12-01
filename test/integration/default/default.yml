@@ -6,4 +6,3 @@
     - auditd_exclusion_rules2: []
   roles:
     - juju4.auditd
-

@@ -44,7 +44,8 @@
 #        PATH: '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
 #      when: auditdrules.changed
 
-    - stat: path=/etc/default/grub
+    - name: Check if grub is present
+      stat: path=/etc/default/grub
       register: hasgrub
     - block:
         - name: check if auditing present in grub config
@@ -58,7 +59,8 @@
       when: hasgrub.stat is defined and hasgrub.stat.exists
     - name: Enable and start auditd
       service: name=auditd state=started enabled=yes
-    - set_fact:
+    - name: Set fact for monit
+      set_fact:
         monit_auditd: true
   when: not (ansible_virtualization_type is defined and (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")) and not osquery_process_auditing
   tags: auditd
@@ -66,7 +68,8 @@
 - block:
     - name: Disable auditd as osquery present with process auditing configured
       service: name=auditd state=stopped enabled=no
-    - set_fact:
+    - name: Set fact for monit
+      set_fact:
         monit_auditd: false
   when: osquery_process_auditing
 
