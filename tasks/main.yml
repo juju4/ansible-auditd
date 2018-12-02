@@ -16,4 +16,7 @@
 ## not supported by raspbian, https://github.com/raspberrypi/linux/issues/1352
 ## nok Alpine. package in edge@testing but 'Error - audit support not in kernel'
 - include: auditd.yml
-  when: ansible_system == 'Linux' and not (ansible_distribution == "Debian" and ansible_architecture == "armv6l") and ansible_os_family != "Alpine"
+  when: >
+    ansible_system == 'Linux' and
+    not (ansible_distribution == "Debian" and ansible_architecture == "armv6l") and
+    ansible_os_family != "Alpine"

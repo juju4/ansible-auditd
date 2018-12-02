@@ -58,11 +58,13 @@ auditd_exclusion_rules2:
   - '-a exit,never -F arch=b64 -S prctl -F exe=/usr/sbin/sshd'
 # admin_user_home
   - '-a exit,never -F arch=b64 -F dir=/home/ -F uid=0 -F auid=4294967295 -S lstat -F exe=/sbin/cgrulesengd'
-  - '-a exit,never -F arch=b64 -F dir=/home/ -F uid=0 -F auid=4294967295 -S lstat -S stat -S open -S inotify_add_watch -S openat -S newfstatat -F exe=/usr/bin/osqueryd'
+  - '-a exit,never -F arch=b64 -F dir=/home/ -F uid=0 -F auid=4294967295 -S lstat -S stat -S open -S inotify_add_watch
+        -S openat -S newfstatat -F exe=/usr/bin/osqueryd'
 # unauthfileacess: setroubleshoot
   - '-a exit,never -F arch=b64 -S open -F success=0 -F uid=996 -F auid=4294967295 -F exe=/usr/bin/rpm'
 # specialfiles
-  - '-a exit,never -F arch=b64 -S mknod -F success=0 -F uid=996 -F auid=4294967295 -F exe=/usr/lib/systemd/systemd-logind'
+  - '-a exit,never -F arch=b64 -S mknod -F success=0 -F uid=996 -F auid=4294967295
+        -F exe=/usr/lib/systemd/systemd-logind'
 # etcpasswd
   - '-a exit,never -F arch=b64 -F path=/etc/shadow -F uid=0 -F auid=4294967295 -S open -F exe=/usr/sbin/crond'
   - '-a exit,never -F arch=b64 -F path=/etc/shadow -F uid=0 -F auid=4294967295 -S open -F exe=/usr/sbin/sshd'
