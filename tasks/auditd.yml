@@ -58,7 +58,7 @@
           ignore_errors: true
         - name: Enable Auditing in grub for Processes That Start Prior to auditd - CIS
           replace: dest=/etc/default/grub regexp='^GRUB_CMDLINE_LINUX="(.*)"' replace='GRUB_CMDLINE_LINUX="\1 audit=1"'
-          when: auditgrub.stdout == ''
+          when: not auditgrub.stdout
       when: hasgrub.stat is defined and hasgrub.stat.exists
     - name: Enable and start auditd
       service: name=auditd state=started enabled=yes
