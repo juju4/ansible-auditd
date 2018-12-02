@@ -14,14 +14,16 @@ before_install:
 # - sudo apt-get install -qq ruby2.0 rake
 # - sudo gem2.0 install serverspec
 install:
-  - pip install ansible
+  - pip install ansible ansible-lint
   - ansible --version
   - "{ echo '[defaults]'; echo 'roles_path = ../'; } >> ansible.cfg"
 #  - gem2.0 --version
+
 script:
   - "echo \"[test-kitchen]\nlocalhost\" > inventory"
 
 # Check the role/playbook's syntax.
+  - "ansible-lint tasks/main.yml"
   - "ansible-playbook -i inventory --syntax-check test/integration/default/default.yml"
 
 # Run the role/playbook with ansible-playbook.
