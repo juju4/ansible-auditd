@@ -1,6 +1,5 @@
 ---
 
-## https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Security_Guide/chap-system_auditing.html
 - block:
 ## https://github.com/lxc/lxd/issues/2004, only on xenial?
     - name: ensure auditd package is present

@@ -55,6 +55,11 @@ $ vagrant ssh
 
 * As auditd is linked to the kernel, role will not do any change when executed inside containers.
 
+## References
+
+* https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Security_Guide/chap-system_auditing.html
+* https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Security_Guide/sec-starting_the_audit_service.html
+
 ## License
 
 BSD 2-clause
