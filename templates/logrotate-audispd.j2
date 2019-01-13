@@ -1,4 +1,4 @@
-## {{ ansible_managed }}
+{{ ansible_managed | comment }}
 ## /etc/logrotate.d/audispd
 /var/log/osquery/audispd.log {
     rotate {{ auditd_logrotate_days | default(30) | int }}
