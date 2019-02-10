@@ -2,5 +2,3 @@
 
 auditd_pkg: auditd
 auditd_confdir: /etc/audit/rules.d
-
-monit_confdir: /etc/monit/conf-available
