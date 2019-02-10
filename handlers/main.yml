@@ -17,6 +17,8 @@
   command: "service auditd restart"
   environment:
     PATH: '/usr/sbin:/usr/bin:/sbin:/bin'
+  args:
+    warn: False
   when: >
     not (ansible_virtualization_type is defined and
           (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")
