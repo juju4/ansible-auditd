@@ -4,6 +4,8 @@
 ## https://github.com/lxc/lxd/issues/2004, only on xenial?
     - name: ensure auditd package is present
       package: name={{ auditd_pkg }} state=present update_cache=yes
+      register: pkg_result
+      until: pkg_result is success
 
     - name: retrieve suid/sgid files list
       command: find / -perm /u=s,g=s -type f
