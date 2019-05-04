@@ -87,5 +87,7 @@ auditd_enable_flag: 2
 # Paths to ignore for suid/sgid files
 auditd_sugid_ignored_paths:
   - /proc
+  - /snap
   # lxc, docker
-  - /var/lib
+  - /var/lib/docker
+  - /var/lib/lxd

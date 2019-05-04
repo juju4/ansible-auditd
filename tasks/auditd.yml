@@ -8,7 +8,9 @@
       until: pkg_result is success
 
     - name: retrieve suid/sgid files list
-      command: "find / -path {{ ' -prune -o -path '.join(auditd_sugid_ignored_paths) }} -prune -o -perm /u=s,g=s -type f -print"
+      command: >
+        find / ! \( -path {{ ' -prune -o -path '.join(auditd_sugid_ignored_paths) }} -prune \)
+          -a -perm /u=s,g=s -type f
       register: sugid_files
       ignore_errors: true
       changed_when: false
