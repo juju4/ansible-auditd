@@ -15,9 +15,8 @@ before_install:
 install:
   - pip install ansible ansible-lint
   - ansible --version
-  - "{ echo '[defaults]'; echo 'roles_path = ../'; } >> ansible.cfg"
+  - "{ echo '[defaults]'; echo 'callback_whitelist = profile_tasks, timer'; echo 'roles_path = ../'; } >> ansible.cfg"
 #  - gem2.0 --version
-  - head -2 ./test/vagrant/ansible.cfg > ansible.cfg
 
 script:
   - "echo \"[test-kitchen]\nlocalhost\" > inventory"
