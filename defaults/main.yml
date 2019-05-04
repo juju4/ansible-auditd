@@ -84,3 +84,8 @@ auditd_failure_mode: 1
 ## ATTENTION! 2 implies any config changes require a system reboot (man auditctl)
 auditd_enable_flag: 2
 #auditd_enable_flag: 1
+# Paths to ignore for suid/sgid files
+auditd_sugid_ignored_paths:
+  - /proc
+  # lxc, docker
+  - /var/lib
