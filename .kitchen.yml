@@ -13,7 +13,7 @@ provisioner:
   ansible_verbose: false
   ansible_verbosity: 4
   ansible_extra_flags: <%= ENV['ANSIBLE_EXTRA_FLAGS'] %>
-  require_chef_omnibus: false
+  ansible_cfg_path: test/vagrant/ansible.cfg
   require_ansible_omnibus: true
 #  require_chef_for_busser: false
   enable_yum_epel: true
