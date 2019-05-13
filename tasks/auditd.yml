@@ -3,7 +3,10 @@
 - block:
 ## https://github.com/lxc/lxd/issues/2004, only on xenial?
     - name: ensure auditd package is present
-      package: name={{ auditd_pkg }} state=present update_cache=yes
+      package:
+        name: "{{ auditd_pkg }}"
+        state: present
+        update_cache: yes
       register: pkg_result
       until: pkg_result is success
 
@@ -14,6 +17,7 @@
       register: sugid_files
       ignore_errors: true
       changed_when: false
+      check_mode: no
 
     - name: configure audit system
       template:
@@ -59,12 +63,22 @@
           changed_when: false
           register: auditgrub
           ignore_errors: true
+          check_mode: no
+
         - name: Enable Auditing in grub for Processes That Start Prior to auditd - CIS
-          replace: dest=/etc/default/grub regexp='^GRUB_CMDLINE_LINUX="(.*)"' replace='GRUB_CMDLINE_LINUX="\1 audit=1"'
+          replace:
+            dest: /etc/default/grub
+            regexp: '^GRUB_CMDLINE_LINUX="(.*)"'
+            replace: 'GRUB_CMDLINE_LINUX="\1 audit=1"'
           when: not auditgrub.stdout
       when: hasgrub.stat is defined and hasgrub.stat.exists
+
     - name: Enable and start auditd
-      service: name=auditd state=started enabled=yes
+      service:
+        name: auditd
+        state: started
+        enabled: yes
+
     - name: Set fact for monit
       set_fact:
         monit_auditd: true
@@ -76,7 +90,10 @@
 
 - block:
     - name: Disable auditd as osquery present with process auditing configured
-      service: name=auditd state=stopped enabled=no
+      service:
+        name: auditd
+        state: stopped
+        enabled: no
     - name: Set fact for monit
       set_fact:
         monit_auditd: false
