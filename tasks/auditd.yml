@@ -19,6 +19,17 @@
       changed_when: false
       check_mode: no
 
+    - name: "create auditd rules {{ auditd_confdir }} directory"
+      file:
+        path: "{{ auditd_confdir }}"
+        state: directory
+
+    - name: check is augenrules is present
+      stat:
+        path: "/sbin/augenrules"
+      register: augenrules_file
+      changed_when: false
+
     - name: configure audit system
       template:
         src: "{{ item }}.rules.j2"
@@ -30,6 +41,11 @@
         - augenrules - debian
         - restart auditd
         - restart auditd - rhel7
+
+    # /sbin/augenrules isn't present to generate /etc/audit/audit.rules
+    - name: concatenate rules into a single file
+      shell: "cat {{ auditd_confdir }}/* > /etc/audit/audit.rules"
+      when: not augenrules_file.stat.exists
 
 ## FIXME! trusty? FAILED! => {"changed": true, "exit_status": 1, "failed": true,
 ##      "msg": "failed to validate", "stderr":

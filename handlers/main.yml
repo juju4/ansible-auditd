@@ -2,15 +2,17 @@
 
 - name: augenrules - debian
   command: augenrules
-  when: ansible_os_family == "Debian"
+  when: augenrules_file.stat.exists
 
 - name: restart auditd
-  service: name=auditd state=restarted
-  when: >
-    not (ansible_virtualization_type is defined and
+  service:
+    name: auditd
+    state: restarted
+  when:
+    - not (ansible_virtualization_type is defined and
           (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")
-        ) and
-    not (ansible_os_family == "RedHat" and ansible_distribution_version.split('.')[0] == '7')
+        )
+    - not ansible_os_family == "RedHat" and ansible_distribution_version.split('.')[0] == '7'
 
 ## https://groups.google.com/forum/#!topic/ansible-project/pv1h1Ne7nSk
 - name: restart auditd - rhel7
@@ -19,8 +21,8 @@
     PATH: '/usr/sbin:/usr/bin:/sbin:/bin'
   args:
     warn: False
-  when: >
-    not (ansible_virtualization_type is defined and
+  when:
+    - not (ansible_virtualization_type is defined and
           (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")
-        ) and
-    (ansible_os_family == "RedHat" and ansible_distribution_version.split('.')[0] == '7')
+        )
+    - ansible_os_family == "RedHat" and ansible_distribution_version.split('.')[0] == '7'
