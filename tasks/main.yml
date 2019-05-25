@@ -1,22 +1,12 @@
 ---
 
-- name: Include version-specific variables for Ubuntu.
-  include_vars: "{{ ansible_distribution }}-{{ ansible_distribution_version }}.yml"
-  when: ansible_distribution == 'Ubuntu'
-- name: Include version-specific variables for Debian.
-  include_vars: "{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml"
-  when: ansible_distribution == 'Debian'
-- name: Include version-specific variables for RedHat
-  include_vars: "RedHat-{{ ansible_distribution_version.split('.')[0] }}.yml"
-  when: ansible_os_family == "RedHat"
-- name: Include version-specific variables for Alpine
-  include_vars: "Alpine.yml"
-  when: ansible_os_family == "Alpine"
+- name: Include version-specific variables "{{ ansible_distribution }}"
+  include_vars: "{{ ansible_distribution }}.yml"
 
 ## not supported by raspbian, https://github.com/raspberrypi/linux/issues/1352
 ## nok Alpine. package in edge@testing but 'Error - audit support not in kernel'
 - include: auditd.yml
-  when: >
-    ansible_system == 'Linux' and
-    not (ansible_distribution == "Debian" and ansible_architecture == "armv6l") and
-    ansible_os_family != "Alpine"
+  when:
+    - ansible_system == 'Linux'
+    - not (ansible_distribution == "Debian" and ansible_architecture == "armv6l")
+    - ansible_os_family != "Alpine"
