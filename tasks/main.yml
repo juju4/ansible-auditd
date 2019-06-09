@@ -1,7 +1,7 @@
 ---
 
-- name: Include version-specific variables "{{ ansible_distribution }}"
-  include_vars: "{{ ansible_distribution }}.yml"
+- name: Include OS family variables
+  include_vars: "{{ ansible_os_family }}.yml"
 
 ## not supported by raspbian, https://github.com/raspberrypi/linux/issues/1352
 ## nok Alpine. package in edge@testing but 'Error - audit support not in kernel'
