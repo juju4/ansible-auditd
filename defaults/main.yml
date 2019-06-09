@@ -27,6 +27,7 @@ auditd_rules_templates:
   - 05-exclusions
   - 10-audit-self
   - 40-base
+  - 43-module-load
   - 50-cis_l2
   - 60-neo23x0
   - 70-rootcmd
