@@ -82,7 +82,7 @@
     - not (ansible_virtualization_type is defined and
           (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")
         )
-    - not osquery_process_auditing
+    - not osquery_process_auditing|bool
   tags: auditd
 
 - block:
@@ -94,6 +94,6 @@
     - name: Set fact for monit
       set_fact:
         monit_auditd: false
-  when: osquery_process_auditing
+  when: osquery_process_auditing|bool
 
 - include: logrotate.yml
