@@ -12,7 +12,7 @@
     - not (ansible_virtualization_type is defined and
           (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")
         )
-    - not ansible_os_family == "RedHat" and ansible_distribution_version.split('.')[0] == '7'
+    - not (ansible_os_family == "RedHat" and ansible_distribution_version.split('.')[0]|int >= 7)
 
 ## https://groups.google.com/forum/#!topic/ansible-project/pv1h1Ne7nSk
 - name: restart auditd - rhel7
@@ -25,4 +25,4 @@
     - not (ansible_virtualization_type is defined and
           (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")
         )
-    - ansible_os_family == "RedHat" and ansible_distribution_version.split('.')[0] == '7'
+    - ansible_os_family == "RedHat" and ansible_distribution_version.split('.')[0]|int >= 7
