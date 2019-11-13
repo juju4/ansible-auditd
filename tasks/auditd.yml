@@ -97,3 +97,4 @@
   when: osquery_process_auditing|bool
 
 - include: logrotate.yml
+  when: osquery_process_auditing|bool
