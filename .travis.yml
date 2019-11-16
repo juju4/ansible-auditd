@@ -45,4 +45,4 @@ after_script:
   - sudo cat /etc/audit/audit.rules
   - sudo auditctl -l
   - cat /etc/rsyslog.d/30-audisp.conf
-  - cat /etc/audisp/plugins.d/syslog.conf
+  - sudo cat /etc/audisp/plugins.d/syslog.conf
