@@ -40,4 +40,4 @@
 
 # only if file, not if remote syslog
 - include: logrotate.yml
-  when: '/var/log/' in audisp_syslog_target
+  when: "'/var/log/' in audisp_syslog_target"
