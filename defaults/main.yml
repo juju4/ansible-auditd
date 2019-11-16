@@ -1,6 +1,9 @@
 ---
 
 osquery_process_auditing: false
+audisp_syslog_enable: false
+audisp_syslog_target: /var/log/audit/audispd.log
+#audisp_syslog_target: @@remotesyslog
 
 auditd_log_tmp: true
 auditd_log_etc: true

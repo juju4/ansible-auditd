@@ -1,0 +1,43 @@
+---
+
+- name: Ensure rsyslog is present
+  package:
+    name: rsyslog
+    state: present
+  register: pkg_result
+  until: pkg_result is success
+
+- name: get rsyslog version
+  command: "rsyslogd -v | awk -F'[ ,]' '/rsyslogd/ { print $2 }'"
+  environment:
+    PATH: '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+  changed_when: false
+  register: rsyslog_v
+
+- name: Ensure base directory exists
+  file:
+    dest: "{{ audisp_syslog_target | dirname }}"
+    state: directory
+    mode: '0755'
+
+- name: setup rsyslog to send audisp logs to a specific target
+  template:
+    src: rsyslog-audisp.conf.j2
+    dest: /etc/rsyslog.d/30-audisp.conf
+    mode: '0644'
+    backup: yes
+  notify:
+    - restart rsyslog
+
+- name: Ensure audis syslog plugin is enabled
+  ini_file:
+    path: /etc/audisp/plugins.d/syslog.conf
+    section: null
+    option: active
+    value: yes
+    mode: '0640'
+    backup: yes
+
+# only if file, not if remote syslog
+- include: logrotate.yml
+  when: '/var/log/' in audisp_syslog_target

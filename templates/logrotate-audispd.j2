@@ -1,6 +1,6 @@
 {{ ansible_managed | comment }}
 ## /etc/logrotate.d/audispd
-/var/log/osquery/audispd.log {
+{{ audisp_syslog_target }} {
     rotate {{ auditd_logrotate_days | default(30) | int }}
     daily
     missingok
