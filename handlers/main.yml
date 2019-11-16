@@ -26,3 +26,6 @@
           (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")
         ) and
     (ansible_os_family == "RedHat" and ansible_distribution_major_version|int >= 7)
+
+- name: restart rsyslog
+  service: name=rsyslog state=restarted
