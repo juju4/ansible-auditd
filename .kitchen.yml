@@ -36,3 +36,6 @@ suites:
   - name: default
     run_list:
     attributes:
+  - name: default-nosyslog
+    run_list:
+    attributes:
