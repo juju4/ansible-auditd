@@ -1,6 +1,6 @@
 ---
 
-- name: augenrules - debian
+- name: augenrules
   command: augenrules
   when: augenrules_file.stat.exists
 
