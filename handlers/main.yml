@@ -1,7 +1,7 @@
 ---
 
 - name: augenrules
-  command: augenrules
+  command: augenrules --load
   when: augenrules_file.stat.exists
 
 - name: restart auditd
