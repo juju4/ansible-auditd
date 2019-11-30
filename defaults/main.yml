@@ -60,6 +60,9 @@ auditd_exclusion_rules:
 auditd_exclusion_rules2:
 # uncommon_syscall
   - '-a exit,never -F arch=b64 -S prctl -F exe=/usr/sbin/sshd'
+  - '-a exit,never -F arch=b64 -S prctl -F exe=/lib/systemd/systemd-journald'
+  - '-a exit,never -F arch=b64 -S prctl -F exe=/lib/systemd/systemd-udevd'
+  - '-a exit,never -F arch=b64 -S prctl -F exe=/bin/systemctl'
 # admin_user_home
   - '-a exit,never -F arch=b64 -F dir=/home/ -F uid=0 -F auid=4294967295 -S lstat -F exe=/sbin/cgrulesengd'
   - '-a exit,never -F arch=b64 -F dir=/home/ -F uid=0 -F auid=4294967295 -S lstat -S stat -S open -S inotify_add_watch
