@@ -8,7 +8,7 @@
   until: pkg_result is success
 
 - name: get rsyslog version
-  command: "rsyslogd -v | awk -F'[ ,]' '/rsyslogd/ { print $2 }'"
+  shell: "rsyslogd -v | awk -F'[ ,]' '/rsyslogd/ { print $2 }'"
   environment:
     PATH: '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
   changed_when: false
@@ -19,6 +19,8 @@
     dest: "{{ audisp_syslog_target | dirname }}"
     state: directory
     mode: '0755'
+    owner: "{{ syslog_user }}"
+    group: root
 
 - name: setup rsyslog to send audisp logs to a specific target
   template:
