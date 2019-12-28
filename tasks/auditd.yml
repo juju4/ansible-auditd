@@ -49,6 +49,16 @@
         dest: /etc/audit/audit.rules
       when: not augenrules_file.stat.exists
 
+    - name: Configure /etc/audit/auditd.conf
+      lineinfile:
+        dest: /etc/audit/auditd.conf
+        regexp: "{{ item.re }}"
+        line: "{{ item.l }}"
+      with_items: "{{ auditd_conf_lineinfile | default([]) }}"
+      notify:
+        - restart auditd
+        - restart auditd - rhel7
+
     - name: Check if grub is present
       stat:
         path: /etc/default/grub

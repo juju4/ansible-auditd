@@ -98,3 +98,8 @@ auditd_sugid_ignored_paths:
   # lxc, docker
   - /var/lib/docker
   - /var/lib/lxd
+
+# auditd.conf(5)
+auditd_conf_lineinfile:
+  # avoid 'dispatch err (pipe full) event lost'
+  - { re: '^disp_qos = .*', l: 'disp_qos = lossless' }
