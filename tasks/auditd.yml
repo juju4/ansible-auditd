@@ -35,7 +35,7 @@
         src: "{{ item }}.rules.j2"
         dest: "{{ auditd_confdir }}/{{ item }}.rules"
         mode: '0644'
-        backup: yes
+        backup: "{{ auditd_backup | default(false) }}"
       with_items: "{{ auditd_rules_templates }}"
       notify:
         - augenrules - debian
