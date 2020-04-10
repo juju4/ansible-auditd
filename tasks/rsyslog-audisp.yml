@@ -8,7 +8,7 @@
   until: pkg_result is success
 
 - name: get rsyslog version
-  shell: "rsyslogd -v | awk -F'[ ,]' '/rsyslogd/ { print $2 }'"
+  shell: "rsyslogd -v | awk -F' '{{ rsyslogd_version_field_separator }}'/rsyslogd/ { print $2 }'"
   environment:
     PATH: '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
   changed_when: false

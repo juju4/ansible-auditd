@@ -3,3 +3,5 @@
 auditd_pkg: audit
 
 syslog_user: root
+
+rsyslogd_version_field_separator: '[ ,]'
