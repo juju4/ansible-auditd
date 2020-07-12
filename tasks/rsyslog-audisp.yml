@@ -7,6 +7,10 @@
   register: pkg_result
   until: pkg_result is success
 
+- name: Gather package facts
+  package_facts:
+    manager: auto
+
 - name: get rsyslog version
   set_fact:
     rsyslog_v: "{{ ansible_facts.packages['rsyslog'][0]['version'] }}"
