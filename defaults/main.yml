@@ -69,7 +69,7 @@ auditd_exclusion_rules2:
         -S openat -S newfstatat -F exe=/usr/bin/osqueryd'
 # unauthfileacess: setroubleshoot
   - '-a exit,never -F arch=b64 -S open -F success=0 -F uid=996 -F auid=4294967295 -F exe=/usr/bin/rpm'
-  - '-a exit,never -F arch=b64 -S open -F success=0 -F uid=104 -F auid=4294967295 -F exe=/usr/sbin/rsyslogd -F dir=/var/log/audispd'
+  - '-a exit,never -F arch=b64 -S open -F success=0 -F uid=104 -F auid=4294967295 -F exe=/usr/sbin/rsyslogd -F dir=/var/log'
 # specialfiles
   - '-a exit,never -F arch=b64 -S mknod -F success=0 -F uid=996 -F auid=4294967295
         -F exe=/usr/lib/systemd/systemd-logind'
