@@ -46,3 +46,4 @@ after_script:
   - sudo auditctl -l
   - cat /etc/rsyslog.d/30-audisp.conf
   - sudo cat /etc/audisp/plugins.d/syslog.conf
+  - sudo tail -100 /var/log/audit/audit.log
