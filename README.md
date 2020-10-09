@@ -14,7 +14,9 @@ It was tested on the following versions:
 
 ### Operating systems
 
-Ubuntu 14.04, 16.04, 18.04 and Centos7
+* Ubuntu 14.04, 16.04, 18.04
+* Centos7
+* Suse 12.x
 
 ## Example Playbook
 

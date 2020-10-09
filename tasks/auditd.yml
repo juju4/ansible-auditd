@@ -41,6 +41,7 @@
         - augenrules
         - restart auditd
         - restart auditd - rhel7
+        - restart auditd - suse
 
     # /sbin/augenrules isn't present to generate /etc/audit/audit.rules
     - name: assemble rules into a single file
@@ -58,6 +59,7 @@
       notify:
         - restart auditd
         - restart auditd - rhel7
+        - restart auditd - suse
 
     - name: Check if grub is present
       stat:
