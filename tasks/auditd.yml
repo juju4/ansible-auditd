@@ -38,7 +38,7 @@
         backup: "{{ auditd_backup | default(false) }}"
       with_items: "{{ auditd_rules_templates }}"
       notify:
-        - augenrules - debian
+        - augenrules
         - restart auditd
         - restart auditd - rhel7
 
