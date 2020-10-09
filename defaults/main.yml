@@ -104,3 +104,5 @@ auditd_sugid_ignored_paths:
 auditd_conf_lineinfile:
   # avoid 'dispatch err (pipe full) event lost'
   - { re: '^disp_qos = .*', l: 'disp_qos = lossless' }
+
+auditd_set_loginuid_immutable: true
