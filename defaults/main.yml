@@ -36,6 +36,7 @@ auditd_rules_templates:
   - 70-rootcmd
   - 71-nobodycmd
   - 90-extra
+  - 91-extra-custom
   - 99-end
 auditd_rule_rootcmd_all: true
 
