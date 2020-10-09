@@ -25,7 +25,7 @@
         state: directory
 
     - name: list files in configuration dir
-      shell: "ls {{ auditd_confdir }}"
+      command: "ls {{ auditd_confdir }}"
       failed_when: no
       changed_when: no
       register: confdir_files
@@ -33,7 +33,7 @@
 
     - name: Delete not managed files in configuration directory
       file:
-        name: "{{auditd_confdir}}/{{ item }}"
+        name: "{{ auditd_confdir }}/{{ item }}"
         state: absent
       loop: "{{ confdir_files.stdout_lines }}"
       when: item.replace('.rules','') not in auditd_rules_templates
