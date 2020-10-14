@@ -16,7 +16,7 @@ It was tested on the following versions:
 
 * Ubuntu 14.04, 16.04, 18.04
 * Centos7
-* Suse 12.x
+* Suse 12.x, 15.x
 
 ## Example Playbook
 
