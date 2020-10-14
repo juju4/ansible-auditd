@@ -24,20 +24,23 @@
         path: "{{ auditd_confdir }}"
         state: directory
 
-    - name: list files in configuration dir
-      command: "ls {{ auditd_confdir }}"
-      failed_when: no
-      changed_when: no
-      register: confdir_files
-      tags: files
+    - block:
+      - name: list files in configuration dir
+        command: "ls {{ auditd_confdir }}"
+        failed_when: no
+        changed_when: no
+        check_mode: no
+        register: confdir_files
+        tags: files
 
-    - name: Delete not managed files in configuration directory
-      file:
-        name: "{{ auditd_confdir }}/{{ item }}"
-        state: absent
-      loop: "{{ confdir_files.stdout_lines }}"
-      when: item.replace('.rules','') not in auditd_rules_templates
-      tags: files
+      - name: Delete not managed files in configuration directory
+        file:
+          name: "{{ auditd_confdir }}/{{ item }}"
+          state: absent
+        loop: "{{ confdir_files.stdout_lines }}"
+        when: item.replace('.rules','') not in auditd_rules_templates
+        tags: files
+      when: auditd_manage_configuration_directory
 
     - name: check is augenrules is present
       stat:

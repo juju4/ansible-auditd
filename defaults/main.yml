@@ -5,6 +5,7 @@ audisp_syslog_enable: true
 audisp_syslog_target: /var/log/audispd/audispd.log
 #audisp_syslog_target: @@remotesyslog
 
+
 auditd_log_tmp: true
 auditd_log_etc: true
 ## Attention! those three would generate lot of logs. alternatives: sysdig/falco, systemtap, osquery...
@@ -24,6 +25,10 @@ auditd_log_binaries_exec:
   - /usr/bin/ruby2.1
   - /usr/bin/ruby2.2
   - /usr/bin/ruby2.3
+
+# This variable controls wether files not managed by this role will be purged
+# from the rules configuration directory
+auditd_manage_configuration_directory: true
 
 auditd_rules_templates:
   - 01-start
