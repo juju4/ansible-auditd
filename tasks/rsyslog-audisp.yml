@@ -7,25 +7,33 @@
   register: pkg_result
   until: pkg_result is success
 
+- name: Gather package facts
+  package_facts:
+    manager: auto
+
 - name: get rsyslog version
-  command: "rsyslogd -v | awk -F'[ ,]' '/rsyslogd/ { print $2 }'"
-  environment:
-    PATH: '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
-  changed_when: false
-  register: rsyslog_v
+  set_fact:
+    rsyslog_v: "{{ ansible_facts.packages['rsyslog'][0]['version'] }}"
+
+- debug: var=rsyslog_v verbosity=1
 
 - name: Ensure base directory exists
   file:
     dest: "{{ audisp_syslog_target | dirname }}"
     state: directory
     mode: '0755'
+    owner: "{{ syslog_user }}"
+    group: root
+  when: >
+    "'/var/log/' in audisp_syslog_target" and
+    audisp_syslog_target|dirname != '/var/log'
 
 - name: setup rsyslog to send audisp logs to a specific target
   template:
     src: rsyslog-audisp.conf.j2
     dest: /etc/rsyslog.d/30-audisp.conf
     mode: '0644'
-    backup: yes
+    backup: "{{ auditd_backup | default(false) }}"
   notify:
     - restart rsyslog
 
@@ -36,7 +44,7 @@
     option: active
     value: 'yes'
     mode: '0640'
-    backup: yes
+    backup: "{{ auditd_backup | default(false) }}"
 
 # only if file, not if remote syslog
 - include: logrotate.yml

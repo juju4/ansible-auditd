@@ -1,11 +1,16 @@
 ---
 sudo: required
-dist: xenial
 language: python
 
 env:
   - suite: default
+    dist: focal
   - suite: default-nosyslog
+    dist: focal
+  - suite: default
+    dist: xenial
+  - suite: default-nosyslog
+    dist: xenial
 
 before_install:
  - sudo apt-get update -qq
@@ -46,3 +51,4 @@ after_script:
   - sudo auditctl -l
   - cat /etc/rsyslog.d/30-audisp.conf
   - sudo cat /etc/audisp/plugins.d/syslog.conf
+  - sudo tail -100 /var/log/audit/audit.log

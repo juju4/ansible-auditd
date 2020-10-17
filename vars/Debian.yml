@@ -1,3 +1,5 @@
 ---
 
 auditd_pkg: auditd
+
+syslog_user: root

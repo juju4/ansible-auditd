@@ -1,7 +1,7 @@
 {{ ansible_managed | comment }}
 {% if audisp_syslog_target is defined and audisp_syslog_target %}
 if $programname == 'audispd' then            {{ audisp_syslog_target }}
-{% if rsyslog_v.stdout is defined and rsyslog_v.stdout|int is version_compare('8.0', '<') %}
+{% if rsyslog_v is defined and rsyslog_v and rsyslog_v|string is version('8.0', '<') %}
 & ~
 {% else %}
 & stop

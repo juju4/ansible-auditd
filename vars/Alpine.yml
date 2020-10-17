@@ -2,3 +2,5 @@
 
 ## 201704 only through edge testing, https://pkgs.alpinelinux.org/packages?name=audit
 auditd_pkg: audit@testing
+
+syslog_user: root

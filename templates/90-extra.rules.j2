@@ -46,25 +46,25 @@
 {% endif %}
 {% if auditd_log_all_connect %}
 # Log all connect (should include socket()) = 'Syscall name unknown: connect'
-#-a exit,always -F arch=b32 -S connect -k connect_call
-#-a exit,always -F arch=b64 -S connect -k connect_call
+-a exit,always -F arch=b32 -S connect -k connect_call
+-a exit,always -F arch=b64 -S connect -k connect_call
 
 {% endif %}
 {% if auditd_log_all_socket %}
 # Log sockets, only the one succeeding
-#-a exit,always -F arch=b64 -F success=1 -S socket -k socket_call
+-a exit,always -F arch=b64 -F success=1 -S socket -k socket_call
 # socket(PF_INET, SOCK_STREAM, x) (ipv4/tcp)
-#-a exit,always -F arch=b32 -a0=2 -F a1=1 -S socket -k socket_call_ipv4_tcp
-#-a exit,always -F arch=b64 -a0=2 -F a1=1 -S socket -k socket_call_ipv4_tcp
+-a exit,always -F arch=b32 -F a0=2 -F a1=1 -S socket -k socket_call_ipv4_tcp
+-a exit,always -F arch=b64 -F a0=2 -F a1=1 -S socket -k socket_call_ipv4_tcp
 # socket(PF_INET, SOCK_DGRAM, x) (ipv4/udp)
-#-a exit,always -F arch=b32 -a0=2 -F a1=2 -S socket -k socket_call_ipv4_udp
-#-a exit,always -F arch=b64 -a0=2 -F a1=2 -S socket -k socket_call_ipv4_udp
+-a exit,always -F arch=b32 -F a0=2 -F a1=2 -S socket -k socket_call_ipv4_udp
+-a exit,always -F arch=b64 -F a0=2 -F a1=2 -S socket -k socket_call_ipv4_udp
 # socket(PF_INET6, SOCK_STREAM, x) (ipv6/tcp)
-#-a exit,always -F arch=b32 -a0=10 -F a1=1 -S socket -k socket_call_ipv6_tcp
-#-a exit,always -F arch=b64 -a0=10 -F a1=1 -S socket -k socket_call_ipv6_tcp
+-a exit,always -F arch=b32 -F a0=10 -F a1=1 -S socket -k socket_call_ipv6_tcp
+-a exit,always -F arch=b64 -F a0=10 -F a1=1 -S socket -k socket_call_ipv6_tcp
 # socket(PF_INET6, SOCK_DGRAM, x) (ipv6/udp)
-#-a exit,always -F arch=b32 -a0=10 -F a1=2 -S socket -k socket_call_ipv6_udp
-#-a exit,always -F arch=b64 -a0=10 -F a1=2 -S socket -k socket_call_ipv6_udp
+-a exit,always -F arch=b32 -F a0=10 -F a1=2 -S socket -k socket_call_ipv6_udp
+-a exit,always -F arch=b64 -F a0=10 -F a1=2 -S socket -k socket_call_ipv6_udp
 
 {% endif %}
 # Audit access to those files
@@ -80,9 +80,4 @@
 -a exit,always -F arch=b32 -S tkill -k sigkill
 -a exit,always -F arch=b64 -S tgkill -k sigkill
 -a exit,always -F arch=b32 -S tgkill -k sigkill
-
-# Extra rules
-{% for r in auditd_extra_rules %}
-{{ r }}
-{% endfor %}
 
