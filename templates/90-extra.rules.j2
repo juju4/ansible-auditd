@@ -81,8 +81,3 @@
 -a exit,always -F arch=b64 -S tgkill -k sigkill
 -a exit,always -F arch=b32 -S tgkill -k sigkill
 
-# Extra rules
-{% for r in auditd_extra_rules %}
-{{ r }}
-{% endfor %}
-
