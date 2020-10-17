@@ -6,7 +6,9 @@
 ## https://gist.github.com/Neo23x0/9fe88c0c5979e017a389b90fd19ddfee
 
 ## Make the loginuid immutable. This prevents tampering with the auid.
+{% if auditd_set_loginuid_immutable %}
 --loginuid-immutable
+{% endif %}
 
 ###################
 # Remove any existing rules

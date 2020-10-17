@@ -24,6 +24,24 @@
         path: "{{ auditd_confdir }}"
         state: directory
 
+    - block:
+      - name: list files in configuration dir
+        command: "ls {{ auditd_confdir }}"
+        failed_when: no
+        changed_when: no
+        check_mode: no
+        register: confdir_files
+        tags: files
+
+      - name: Delete not managed files in configuration directory
+        file:
+          name: "{{ auditd_confdir }}/{{ item }}"
+          state: absent
+        loop: "{{ confdir_files.stdout_lines }}"
+        when: item.replace('.rules','') not in auditd_rules_templates
+        tags: files
+      when: auditd_manage_configuration_directory
+
     - name: check is augenrules is present
       stat:
         path: "/sbin/augenrules"
@@ -38,9 +56,10 @@
         backup: "{{ auditd_backup | default(false) }}"
       with_items: "{{ auditd_rules_templates }}"
       notify:
-        - augenrules - debian
+        - augenrules
         - restart auditd
         - restart auditd - rhel7
+        - restart auditd - suse
 
     # /sbin/augenrules isn't present to generate /etc/audit/audit.rules
     - name: assemble rules into a single file
@@ -58,6 +77,7 @@
       notify:
         - restart auditd
         - restart auditd - rhel7
+        - restart auditd - suse
 
     - name: Check if grub is present
       stat:
