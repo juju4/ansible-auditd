@@ -1,5 +1,5 @@
-[![Build Status - Master](https://travis-ci.org/juju4/ansible-auditd.svg?branch=master)](https://travis-ci.org/juju4/ansible-auditd)
-[![Build Status - Devel](https://travis-ci.org/juju4/ansible-auditd.svg?branch=devel)](https://travis-ci.org/juju4/ansible-auditd/branches)
+[![Build Status - Master](https://travis-ci.com/juju4/ansible-auditd.svg?branch=master)](https://travis-ci.com/juju4/ansible-auditd)
+[![Build Status - Devel](https://travis-ci.com/juju4/ansible-auditd.svg?branch=devel)](https://travis-ci.com/juju4/ansible-auditd/branches)
 # Linux auditd ansible role
 
 Ansible role to setup and configure linux auditd
