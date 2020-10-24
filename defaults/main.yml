@@ -77,8 +77,7 @@ auditd_exclusion_rules2:
   - '-a exit,never -F arch=b64 -S open -F success=0 -F uid=996 -F auid=4294967295 -F exe=/usr/bin/rpm'
   - '-a exit,never -F arch=b64 -S open -F success=0 -F uid=104 -F auid=4294967295 -F exe=/usr/sbin/rsyslogd -F dir=/var/log'
 # specialfiles
-  - '-a exit,never -F arch=b64 -S mknod -F success=0 -F uid=996 -F auid=4294967295
-        -F exe=/usr/lib/systemd/systemd-logind'
+  - '-a exit,never -F arch=b64 -S mknod -F success=0 -F uid=996 -F auid=4294967295 -F exe=/usr/lib/systemd/systemd-logind'
 # etcpasswd
   - '-a exit,never -F arch=b64 -F path=/etc/shadow -F uid=0 -F auid=4294967295 -S open -F exe=/usr/sbin/crond'
   - '-a exit,never -F arch=b64 -F path=/etc/shadow -F uid=0 -F auid=4294967295 -S open -F exe=/usr/sbin/sshd'
@@ -87,8 +86,12 @@ auditd_exclusion_rules2:
   - '-a exit,never -F arch=b64 -F dir=/etc/ -F uid=0 -F auid=4294967295 -S open -S rename -F exe=/usr/bin/osqueryd'
 # rootcmd
   - '-a exit,never -F arch=b64 -F uid=0 -F auid=4294967295 -S execve -F exe=/usr/sbin/sshd'
-  - '-a exit,never -F arch=b64 -F uid=0 -F auid=4294967295 -S execve -F exe=/usr/lib64/sa/sadc'
   - '-a exit,never -F arch=b64 -F uid=0 -F auid=4294967295 -S execve -F exe=/usr/libexec/abrt-handle-event'
+
+auditd_exclusion_rules_debian:
+  - '-a exit,never -F arch=b64 -F uid=0 -F auid=4294967295 -S execve -F exe=/usr/lib/sysstat/sadc'
+auditd_exclusion_rules_redhat:
+  - '-a exit,never -F arch=b64 -F uid=0 -F auid=4294967295 -S execve -F exe=/usr/lib64/sa/sadc'
 
 # load at the end
 auditd_extra_rules: []

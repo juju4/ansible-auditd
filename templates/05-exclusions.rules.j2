@@ -9,3 +9,16 @@
 {% endfor %}
 {% endif %}
 
+{% if (ansible_os_family == "Debian") %}
+# Debian family
+{% for r in auditd_exclusion_rules_debian %}
+{{ r }}
+{% endfor %}
+{% endif %}
+
+{% if (ansible_os_family == "RedHat") %}
+# RedHat family
+{% for r in auditd_exclusion_rules_redhat %}
+{{ r }}
+{% endfor %}
+{% endif %}
