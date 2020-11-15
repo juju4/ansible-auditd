@@ -51,6 +51,7 @@ auditd_exclusion_rules:
   - '-a always,exclude -F msgtype=CWD'
   - '-a always,exclude -F msgtype=EOE'
 #  - '-a always,exclude -F msgtype=PATH'
+#  - '-a always,exclude -F msgtype=PROCTITLE'
   - '-a always,exclude -F msgtype=CRYPTO_KEY_USER'
 # cron jobs
   - '-a never,user -F subj_type=crond_t'
@@ -65,7 +66,8 @@ auditd_exclusion_rules:
 # This set use 'exe' filter which is available on more recent auditd (RHEL7.3+, Ubuntu Xenial+)
 auditd_exclusion_rules2:
 # uncommon_syscall
-  - '-a exit,never -F arch=b64 -S prctl -F exe=/usr/sbin/sshd'
+  - '-a exit,never -F arch=b64 -F uid=0 -F auid=4294967295 -S prctl -F exe=/usr/sbin/sshd'
+  - '-a exit,never -F arch=b64 -F uid=0 -F auid=4294967295 -S prctl -F exe=/usr/lib/openssh/sftp-server'
   - '-a exit,never -F arch=b64 -S prctl -F exe=/lib/systemd/systemd-journald'
   - '-a exit,never -F arch=b64 -S prctl -F exe=/lib/systemd/systemd-udevd'
   - '-a exit,never -F arch=b64 -S prctl -F exe=/bin/systemctl'
@@ -82,14 +84,20 @@ auditd_exclusion_rules2:
   - '-a exit,never -F arch=b64 -F path=/etc/shadow -F uid=0 -F auid=4294967295 -S open -F exe=/usr/sbin/crond'
   - '-a exit,never -F arch=b64 -F path=/etc/shadow -F uid=0 -F auid=4294967295 -S open -F exe=/usr/sbin/sshd'
   - '-a exit,never -F arch=b64 -F path=/etc/shadow -F uid=0 -F auid=4294967295 -S open -F exe=/usr/sbin/unix_chkpwd'
-# etcwrite
-  - '-a exit,never -F arch=b64 -F dir=/etc/ -F uid=0 -F auid=4294967295 -S open -S rename -F exe=/usr/bin/osqueryd'
 # rootcmd
   - '-a exit,never -F arch=b64 -F uid=0 -F auid=4294967295 -S execve -F exe=/usr/sbin/sshd'
-  - '-a exit,never -F arch=b64 -F uid=0 -F auid=4294967295 -S execve -F exe=/usr/libexec/abrt-handle-event'
+  - '-a exit,never -F arch=b64 -F uid=0 -F auid=4294967295 -S execve -F exe=/usr/sbin/sshd'
+  - '-a exit,never -F arch=b64 -F uid=0 -F auid=4294967295 -S execve -F exe=/bin/sleep'
+  - '-a exit,never -F arch=b64 -F uid=0 -F auid=0 -S execve -F exe=/usr/bin/env'
+  - '-a exit,never -F arch=b64 -F uid=0 -F auid=4294967295 -S execve -F exe=/usr/bin/dirname'
+  - '-a exit,never -F arch=b64 -F uid=0 -F auid=0 -S execve -F exe=/usr/bin/dirname'
 
 auditd_exclusion_rules_debian:
   - '-a exit,never -F arch=b64 -F uid=0 -F auid=4294967295 -S execve -F exe=/usr/lib/sysstat/sadc'
+# time-change
+  - '-a exit,never -F arch=b64 -F uid=111 -F auid=4294967295 -S adjtimex -F exe=/usr/sbin/ntpd -F success=0'
+# tmp_write
+  - '-a exit,never -F arch=b64 -F uid=0 -F auid=4294967295 -S openat -S unlink -F exe=/usr/bin/apt-mark -F success=0'
 auditd_exclusion_rules_redhat:
   - '-a exit,never -F arch=b64 -F uid=0 -F auid=4294967295 -S execve -F exe=/usr/lib64/sa/sadc'
 
