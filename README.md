@@ -62,6 +62,7 @@ $ vagrant ssh
 * https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Security_Guide/chap-system_auditing.html
 * https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Security_Guide/sec-starting_the_audit_service.html
 * https://github.com/bfuzzy/auditd-attack
+* https://github.com/Neo23x0/auditd/
 
 ## License
 
