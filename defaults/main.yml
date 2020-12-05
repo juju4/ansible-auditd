@@ -129,3 +129,4 @@ auditd_set_loginuid_immutable: true
 auditd_reporting: true
 audispd_reporting_template: audispd_report.sh
 audispd_reporting_dest: /var/tmp
+audispd_logrotate_days: 10
