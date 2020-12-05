@@ -67,6 +67,7 @@
       assemble:
         src: "{{ auditd_confdir }}"
         dest: /etc/audit/audit.rules
+        mode: '0644'
       when: not augenrules_file.stat.exists
 
     - name: Configure /etc/audit/auditd.conf
