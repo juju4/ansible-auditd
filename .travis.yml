@@ -40,6 +40,6 @@ after_script:
   - sudo ls /etc/audit/rules.d
   - sudo cat /etc/audit/audit.rules
   - sudo auditctl -l
-  - cat /etc/rsyslog.d/30-audisp.conf
+  - cat /etc/rsyslog.d/30-audispd.conf
   - sudo cat /etc/audisp/plugins.d/syslog.conf
   - sudo tail -100 /var/log/audit/audit.log

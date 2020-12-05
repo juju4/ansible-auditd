@@ -3,7 +3,7 @@ require 'serverspec'
 # Required by serverspec
 set :backend, :exec
 
-describe file('/etc/rsyslog.d/30-audisp.conf') do
+describe file('/etc/rsyslog.d/30-audispd.conf') do
   it { should be_file }
   it { should be_mode 0644 }
   it { should contain 'if $programname == \'audispd\' then' }

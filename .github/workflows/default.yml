@@ -62,7 +62,7 @@ jobs:
         continue-on-error: true
       - name: After script - rsyslog
         run: |
-          cat /etc/rsyslog.d/30-audisp.conf
+          cat /etc/rsyslog.d/30-audispd.conf
           sudo cat /etc/audisp/plugins.d/syslog.conf
           sudo tail -100 /var/log/audit/audit.log
         continue-on-error: true
