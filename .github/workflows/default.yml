@@ -54,11 +54,15 @@ jobs:
         run: |
           systemctl -l --no-pager status auditd
         if: env.WORKFLOW_CONCLUSION == 'failure'  # notify only if failure
-      - name: After script
+      - name: After script - rules
         run: |
           sudo ls /etc/audit/rules.d
           sudo cat /etc/audit/audit.rules
           sudo auditctl -l
+        continue-on-error: true
+      - name: After script - rsyslog
+        run: |
           cat /etc/rsyslog.d/30-audisp.conf
           sudo cat /etc/audisp/plugins.d/syslog.conf
           sudo tail -100 /var/log/audit/audit.log
+        continue-on-error: true
