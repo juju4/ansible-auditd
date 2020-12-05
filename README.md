@@ -6,7 +6,8 @@
 
 # Linux auditd ansible role
 
-Ansible role to setup and configure linux auditd
+Ansible role to setup and configure linux auditd.
+
 Possible [visualization with R](https://security-plus-data-science.blogspot.ca/2017/05/audit-record-fields-visualized.html).
 
 ## Requirements & Dependencies
@@ -15,11 +16,12 @@ Possible [visualization with R](https://security-plus-data-science.blogspot.ca/2
 It was tested on the following versions:
  * 2.2
  * 2.5
+ * 2.10
 
 ### Operating systems
 
-* Ubuntu 14.04, 16.04, 18.04
-* Centos7
+* Ubuntu 16.04, 18.04, 20.04
+* Centos 7, 8
 * Suse 12.x, 15.x
 
 ## Example Playbook
@@ -71,4 +73,3 @@ $ vagrant ssh
 ## License
 
 BSD 2-clause
-
