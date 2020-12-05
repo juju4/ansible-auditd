@@ -7,6 +7,11 @@
     notifempty
     delaycompress
     compress
-    create 640 root adm
+    create 640 {{ syslog_user }} adm
     sharedscripts
+{% if auditd_reporting %}
+    prerotate
+        test ! -x /usr/local/scripts/{{ audispd_reporting_template | basename }} || /usr/local/scripts/{{ audispd_reporting_template | basename }} > {{ audispd_reporting_dest }}/audispd-report-`date +%Y%m%d` 2>&1
+    endscript
+{% endif %}
 }

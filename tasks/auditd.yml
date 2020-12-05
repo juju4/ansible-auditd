@@ -105,6 +105,9 @@
         state: started
         enabled: yes
 
+    - include: reporting.yml
+      when: auditd_reporting
+
     - name: Set fact for monit
       set_fact:
         monit_auditd: true

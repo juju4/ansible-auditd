@@ -123,3 +123,7 @@ auditd_conf_lineinfile:
   - { re: '^disp_qos = .*', l: 'disp_qos = lossless' }
 
 auditd_set_loginuid_immutable: true
+
+auditd_reporting: true
+audispd_reporting_template: audispd_report.sh
+audispd_reporting_dest: /var/tmp

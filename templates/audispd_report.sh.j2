@@ -1,0 +1,35 @@
+#!/bin/sh
+# TODO: filter rootcmd, sigkill, tmp_write,time-change
+
+f=/var/log/audispd.log
+date=`date +%Y%m%d`
+echo
+echo
+echo "      AUDISPD DAILY REPORT $date for $f"
+echo
+echo
+
+echo "*** per type+syscall+name"
+cut -d ' ' -f 7,10,32 $f | sort | uniq -c | sort -nr | head -20
+
+echo "*** SECCOMP uid+exe+syscall"
+grep SECCOMP $f | cut -d ' ' -f 10,15,18 | sort | uniq -c | sort -nr | head -20
+echo "*** AVC apparmor action+operation+profile"
+grep AVC $f | cut -d ' ' -f 9,10,11 | sort | uniq -c | sort -nr | head -20
+echo "*** AVC apparmor denied action+operation+profile"
+egrep 'AVC.*apparmor="DENIED"' $f | cut -d ' ' -f 9,10,11 | sort | uniq -c | sort -nr | head -20
+
+echo "*** SYSCALL per keyword"
+grep SYSCALL $f | cut -d ' ' -f 33 | sort | uniq -c | sort -nr
+echo "*** SYSCALL per syscall,exe,keyword"
+grep SYSCALL $f | cut -d ' ' -f 10,32,33 | sort | uniq -c | sort -nr
+echo "*** rootcmd"
+grep 'key="rootcmd"' $f | cut -d ' ' -f 10,11,20,21,32,33 | sort | uniq -c | sort -nr | head -20
+echo "*** sigkill"
+grep 'key="sigkill"' $f | cut -d ' ' -f 10,11,20,21,32,33 | sort | uniq -c | sort -nr
+echo "*** tmp_write"
+grep 'key="tmp_write"' $f | cut -d ' ' -f 10,11,20,21,32,33 | sort | uniq -c | sort -nr
+echo "*** time-change"
+grep 'key="time-change"' $f | cut -d ' ' -f 10,11,20,21,32,33 | sort | uniq -c | sort -nr
+
+find {{ audispd_reporting_dest }} -name 'audispd-report-*' -mtime +{{ audispd_logrotate_days|int }} -exec rm {} \; 2>/dev/null
