@@ -3,7 +3,7 @@
 osquery_process_auditing: false
 audisp_syslog_enable: true
 audisp_syslog_target: /var/log/audispd/audispd.log
-#audisp_syslog_target: @@remotesyslog
+# audisp_syslog_target: @@remotesyslog
 
 
 auditd_log_tmp: true
@@ -14,8 +14,8 @@ auditd_log_all_socket: false
 auditd_log_all_connect: false
 auditd_sensitive_files:
   - /etc/shadow
-## file must exist
-#  - /data/topsecret.data
+  ## file must exist
+  # - /data/topsecret.data
 auditd_log_binaries_exec:
   - /usr/bin/perl
   - /usr/bin/python
@@ -46,57 +46,59 @@ auditd_rule_rootcmd_all: true
 auditd_exclusion_rules:
   - '-a always,exclude -F msgtype=CWD'
   - '-a always,exclude -F msgtype=EOE'
-#  - '-a always,exclude -F msgtype=PATH'
-#  - '-a always,exclude -F msgtype=PROCTITLE'
+  # - '-a always,exclude -F msgtype=PATH'
+  # - '-a always,exclude -F msgtype=PROCTITLE'
   - '-a always,exclude -F msgtype=CRYPTO_KEY_USER'
-# cron jobs
+  # cron jobs
   - '-a never,user -F subj_type=crond_t'
-# VMWare tools
+  # VMWare tools
   - '-a never,exit -F arch=b32 -S fork -F success=0 -F path=/usr/lib/vmware-tools -F subj_type=initrc_t -F exit=-2'
   - '-a never,exit -F arch=b64 -S fork -F success=0 -F path=/usr/lib/vmware-tools -F subj_type=initrc_t -F exit=-2'
   - '-a never,exit -F dir=/var/lock/lvm'
-# High Volume Event Filter (especially on Linux Workstations)
+  # High Volume Event Filter (especially on Linux Workstations)
   - '-a never,exit -F arch=b32 -F dir=/dev/shm -k sharedmemaccess'
   - '-a never,exit -F arch=b64 -F dir=/dev/shm -k sharedmemaccess'
-#  - '-a never,exit -F dir=/path/to/directory'
-#  - '-a never,exit -F path=/path/to/file'
-#  - '-a never,exit -F auid=<UID>'
+  # - '-a never,exit -F dir=/path/to/directory'
+  # - '-a never,exit -F path=/path/to/file'
+  # - '-a never,exit -F auid=<UID>'
 
 # This set use 'exe' filter which is available on more recent auditd (RHEL7.3+, Ubuntu Xenial+)
 auditd_exclusion_rules2:
-# uncommon_syscall
+  # uncommon_syscall
   - '-a never,exit -F arch=b64 -F uid=0 -F auid=4294967295 -S prctl -F exe=/usr/sbin/sshd'
   - '-a never,exit -F arch=b64 -F uid=0 -F auid=4294967295 -S prctl -F exe=/usr/lib/openssh/sftp-server'
   - '-a never,exit -F arch=b64 -S prctl -F exe=/lib/systemd/systemd-journald'
   - '-a never,exit -F arch=b64 -S prctl -F exe=/lib/systemd/systemd-udevd'
   - '-a never,exit -F arch=b64 -S prctl -F exe=/bin/systemctl'
-# admin_user_home
+  # admin_user_home
   - '-a never,exit -F arch=b64 -F dir=/home/ -F uid=0 -F auid=4294967295 -S lstat -F exe=/sbin/cgrulesengd'
-  - '-a never,exit -F arch=b64 -F dir=/home/ -F uid=0 -F auid=4294967295 -S lstat -S stat -S open -S inotify_add_watch
-        -S openat -S newfstatat -F exe=/usr/bin/osqueryd'
-# unauthfileacess: setroubleshoot
+  - '-a never,exit -F arch=b64 -F dir=/home/ -F uid=0 -F auid=4294967295 -S lstat -S stat -S open -S inotify_add_watch -S openat -S newfstatat -F exe=/usr/bin/osqueryd'
+  # unauthfileacess: setroubleshoot
   - '-a never,exit -F arch=b64 -S open -F success=0 -F uid=996 -F auid=4294967295 -F exe=/usr/bin/rpm'
   - '-a never,exit -F arch=b64 -S open -F success=0 -F uid=104 -F auid=4294967295 -F exe=/usr/sbin/rsyslogd -F dir=/var/log'
-# specialfiles
+  # specialfiles
   - '-a never,exit -F arch=b64 -S mknod -F success=0 -F uid=996 -F auid=4294967295 -F exe=/usr/lib/systemd/systemd-logind'
-# etcpasswd
+  # etcpasswd
   - '-a never,exit -F arch=b64 -F path=/etc/shadow -F uid=0 -F auid=4294967295 -S open -F exe=/usr/sbin/crond'
   - '-a never,exit -F arch=b64 -F path=/etc/shadow -F uid=0 -F auid=4294967295 -S open -F exe=/usr/sbin/sshd'
   - '-a never,exit -F arch=b64 -F path=/etc/shadow -F uid=0 -F auid=4294967295 -S open -F exe=/usr/sbin/unix_chkpwd'
-# rootcmd
-  - '-a never,exit -F arch=b64 -F uid=0 -F auid=4294967295 -S execve -F exe=/usr/sbin/sshd'
-  - '-a never,exit -F arch=b64 -F uid=0 -F auid=4294967295 -S execve -F exe=/usr/sbin/sshd'
-  - '-a never,exit -F arch=b64 -F uid=0 -F auid=4294967295 -S execve -F exe=/bin/sleep'
-  - '-a never,exit -F arch=b64 -F uid=0 -F auid=0 -S execve -F exe=/usr/bin/env'
-  - '-a never,exit -F arch=b64 -F uid=0 -F auid=4294967295 -S execve -F exe=/usr/bin/dirname'
-  - '-a never,exit -F arch=b64 -F uid=0 -F auid=0 -S execve -F exe=/usr/bin/dirname'
+  # rootcmd
+  - '-a never,exit -F arch=b64 -F uid=0 -F auid=4294967295 -S execve -F exe=/usr/sbin/sshd -F success=0'
+  - '-a never,exit -F arch=b64 -F uid=0 -F auid=4294967295 -S execve -F exe=/usr/sbin/sshd -F success=0'
+  - '-a never,exit -F arch=b64 -F uid=0 -F auid=4294967295 -S execve -F exe=/bin/sleep -F success=0'
+  - '-a exit,never -F arch=b64 -F uid=0 -F auid=4294967295 -S execve -F exe=/usr/bin/env -F success=0'
+  - '-a never,exit -F arch=b64 -F uid=0 -F auid=0 -S execve -F exe=/usr/bin/env -F success=0'
+  - '-a never,exit -F arch=b64 -F uid=0 -F auid=4294967295 -S execve -F exe=/usr/bin/dirname -F success=0'
+  - '-a never,exit -F arch=b64 -F uid=0 -F auid=0 -S execve -F exe=/usr/bin/dirname -F success=0'
 
 auditd_exclusion_rules_debian:
   - '-a never,exit -F arch=b64 -F uid=0 -F auid=4294967295 -S execve -F exe=/usr/lib/sysstat/sadc'
-# time-change
+  # time-change
   - '-a never,exit -F arch=b64 -F uid=111 -F auid=4294967295 -S adjtimex -F exe=/usr/sbin/ntpd -F success=0'
-# tmp_write
+  # tmp_write
   - '-a never,exit -F arch=b64 -F uid=0 -F auid=4294967295 -S openat -S unlink -F exe=/usr/bin/apt-mark -F success=0'
+  # time-change
+  - '-a exit,never -F arch=b64 -F uid=111 -F auid=4294967295 -S adjtimex -F exe=/usr/sbin/ntpd -F success=0'
 auditd_exclusion_rules_redhat:
   - '-a never,exit -F arch=b64 -F uid=0 -F auid=4294967295 -S execve -F exe=/usr/lib64/sa/sadc'
   - '-a never,exit -F arch=b64 -S adjtimex -F auid=unset -F uid=_chrony -F subj_type=chronyd_t'
@@ -108,7 +110,7 @@ auditd_buffer_size: 32768
 auditd_failure_mode: 1
 ## ATTENTION! 2 implies any config changes require a system reboot (man auditctl)
 auditd_enable_flag: 2
-#auditd_enable_flag: 1
+# auditd_enable_flag: 1
 # Paths to ignore for suid/sgid files
 auditd_sugid_ignored_paths:
   - /proc

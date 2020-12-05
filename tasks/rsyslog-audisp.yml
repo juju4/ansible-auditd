@@ -23,15 +23,15 @@
     state: directory
     mode: '0755'
     owner: "{{ syslog_user }}"
-    group: root
+    group: "{{ syslog_group | default('root') }}"
   when: >
     "'/var/log/' in audisp_syslog_target" and
     audisp_syslog_target|dirname != '/var/log'
 
 - name: setup rsyslog to send audisp logs to a specific target
   template:
-    src: rsyslog-audisp.conf.j2
-    dest: /etc/rsyslog.d/30-audisp.conf
+    src: rsyslog-audispd.conf.j2
+    dest: /etc/rsyslog.d/30-audispd.conf
     mode: '0644'
     backup: "{{ auditd_backup | default(false) }}"
   notify:
@@ -47,5 +47,6 @@
     backup: "{{ auditd_backup | default(false) }}"
 
 # only if file, not if remote syslog
+- debug: var=audisp_syslog_target
 - include: logrotate.yml
   when: "'/var/log/' in audisp_syslog_target"

@@ -11,16 +11,16 @@ galaxy_info:
   # platform on this list, let us know and we'll get it added!
   #
   platforms:
-  - name: EL
-    versions:
-     - 6
-     - 7
-  - name: Ubuntu
-    versions:
-    - trusty
-    - xenial
-    - bionic
+    - name: EL
+      versions:
+        - 6
+        - 7
+    - name: Ubuntu
+      versions:
+        - trusty
+        - xenial
+        - bionic
   galaxy_tags:
-  - system
-  - security
+    - system
+    - security
 dependencies: []

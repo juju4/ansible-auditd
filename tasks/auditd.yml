@@ -1,7 +1,7 @@
 ---
 
 - block:
-## https://github.com/lxc/lxd/issues/2004, only on xenial?
+    # https://github.com/lxc/lxd/issues/2004, only on xenial?
     - name: ensure auditd package is present
       package:
         name: "{{ auditd_pkg }}"
@@ -23,23 +23,24 @@
       file:
         path: "{{ auditd_confdir }}"
         state: directory
+        mode: '0750'
 
     - block:
-      - name: list files in configuration dir
-        command: "ls {{ auditd_confdir }}"
-        failed_when: no
-        changed_when: no
-        check_mode: no
-        register: confdir_files
-        tags: files
+        - name: list files in configuration dir
+          command: "ls {{ auditd_confdir }}"
+          failed_when: no
+          changed_when: no
+          check_mode: no
+          register: confdir_files
+          tags: files
 
-      - name: Delete not managed files in configuration directory
-        file:
-          name: "{{ auditd_confdir }}/{{ item }}"
-          state: absent
-        loop: "{{ confdir_files.stdout_lines }}"
-        when: item.replace('.rules','') not in auditd_rules_templates
-        tags: files
+        - name: Delete not managed files in configuration directory
+          file:
+            name: "{{ auditd_confdir }}/{{ item }}"
+            state: absent
+          loop: "{{ confdir_files.stdout_lines }}"
+          when: item.replace('.rules','') not in auditd_rules_templates
+          tags: files
       when: auditd_manage_configuration_directory
 
     - name: check is augenrules is present
@@ -73,6 +74,7 @@
         dest: /etc/audit/auditd.conf
         regexp: "{{ item.re }}"
         line: "{{ item.l }}"
+        mode: '0640'
       with_items: "{{ auditd_conf_lineinfile | default([]) }}"
       notify:
         - restart auditd
@@ -129,5 +131,6 @@
         monit_auditd: false
   when: osquery_process_auditing|bool
 
+- debug: var=audisp_syslog_enable
 - include: rsyslog-audisp.yml
   when: audisp_syslog_enable|bool
