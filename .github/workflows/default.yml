@@ -31,14 +31,14 @@ jobs:
           pip install ansible-lint flake8 yamllint
       - name: yamllint
         run: |
-          yamllint .
-      - name: yamllint
-        run: |
-          ansible-lint
-      - name: run test
-        run: |
           pwd
           find -ls
+          cd $GITHUB_WORKSPACE/juju4.auditd && yamllint .
+      - name: ansible-lint
+        run: |
+          cd $GITHUB_WORKSPACE/juju4.auditd && ansible-lint
+      - name: run test
+        run: |
           cd $GITHUB_WORKSPACE/juju4.auditd && ansible-playbook -i localhost, --connection=local --become -vvv test/integration/default/default.yml
         env:
           PY_COLORS: '1'
