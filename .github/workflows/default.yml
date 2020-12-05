@@ -49,9 +49,6 @@ jobs:
       - name: On failure
         run: |
           systemctl -l --no-pager status auditd
-        with:
-          # status: ${{ env.WORKFLOW_CONCLUSION }}  # neutral, success, skipped, cancelled, timed_out, action_required, failure
-          status: failure
         if: env.WORKFLOW_CONCLUSION == 'failure'  # notify only if failure
       - name: After script
         run: |
