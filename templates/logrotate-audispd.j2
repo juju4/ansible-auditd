@@ -4,7 +4,6 @@
     rotate {{ auditd_logrotate_days | default(30) | int }}
     daily
     missingok
-    notifempty
     delaycompress
     compress
     create 640 {{ syslog_user }} adm
