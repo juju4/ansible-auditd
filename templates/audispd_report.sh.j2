@@ -11,6 +11,7 @@ echo
 
 # Small extract to validate file and fields
 head -5 $f
+echo
 
 echo "*** per type+syscall+name"
 cut -d ' ' -f 7,10,32 $f | sort | uniq -c | sort -nr | head -20
