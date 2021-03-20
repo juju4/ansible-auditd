@@ -1,5 +1,5 @@
 ---
-name: AnsibleCI
+name: lint
 
 on:
   push:
@@ -44,28 +44,9 @@ jobs:
           pwd
           env
           find -ls
-      - name: run test
+      - name: yamllint
         run: |
-          cd $GITHUB_WORKSPACE/juju4.auditd && ansible-playbook -i localhost, --connection=local --become -vvv test/integration/default/default.yml
-        env:
-          PY_COLORS: '1'
-          ANSIBLE_FORCE_COLOR: '1'
-      - name: idempotency run
+          cd $GITHUB_WORKSPACE/juju4.auditd && yamllint .
+      - name: ansible-lint
         run: |
-          cd $GITHUB_WORKSPACE/juju4.auditd && ansible-playbook -i localhost, --connection=local --become -vvv test/integration/default/default.yml | tee /tmp/idempotency.log | grep -q 'changed=0.*failed=0'  && (echo 'Idempotence test: pass' && exit 0)  || (echo 'Idempotence test: fail' && cat /tmp/idempotency.log && exit 1)
-      - name: On failure
-        run: |
-          systemctl -l --no-pager status auditd
-        if: env.WORKFLOW_CONCLUSION == 'failure'  # notify only if failure
-      - name: After script - rules
-        run: |
-          sudo ls /etc/audit/rules.d
-          sudo cat /etc/audit/audit.rules
-          sudo auditctl -l
-        continue-on-error: true
-      - name: After script - rsyslog
-        run: |
-          cat /etc/rsyslog.d/30-audispd.conf
-          sudo cat /etc/audisp/plugins.d/syslog.conf
-          sudo tail -100 /var/log/audit/audit.log
-        continue-on-error: true
+          cd $GITHUB_WORKSPACE/juju4.auditd && ansible-lint
