@@ -15,7 +15,8 @@
   set_fact:
     rsyslog_v: "{{ ansible_facts.packages['rsyslog'][0]['version'] }}"
 
-- debug: var=rsyslog_v verbosity=1
+- name: Debug | rsyslog version
+  debug: var=rsyslog_v verbosity=1
 
 - name: Ensure base directory exists
   file:
@@ -47,6 +48,7 @@
     backup: "{{ auditd_backup | default(false) }}"
 
 # only if file, not if remote syslog
-- debug: var=audisp_syslog_target
+- name: Debug | audisp_syslog_target
+  debug: var=audisp_syslog_target
 - include: logrotate.yml
   when: "'/var/log/' in audisp_syslog_target"

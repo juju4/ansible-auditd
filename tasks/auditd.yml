@@ -132,6 +132,7 @@
         monit_auditd: false
   when: osquery_process_auditing|bool
 
-- debug: var=audisp_syslog_enable
+- name: Debug | audisp_syslog_enable
+  debug: var=audisp_syslog_enable
 - include: rsyslog-audisp.yml
   when: audisp_syslog_enable|bool
