@@ -15,6 +15,7 @@
 # Use of stunnel
 ###################
 -w /usr/sbin/stunnel -p x -k stunnel
+-w /usr/bin/stunnel -p x -k stunnel
 
 ###################
 # Schedule jobs
@@ -82,6 +83,7 @@
 # Kernel parameters and modules
 ###################
 -w /etc/sysctl.conf -p wa -k sysctl
+-w /etc/sysctl.d -p wa -k sysctl
 -w /etc/modprobe.conf -p wa -k modprobe
 ###################
 
