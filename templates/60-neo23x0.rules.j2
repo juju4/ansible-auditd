@@ -8,7 +8,9 @@
 -a always,exit -F arch=b32 -S finit_module -S init_module -S delete_module -F auid!=-1 -k modules
 
 ## Modprobe configuration
+{% if ansible_os_family == 'RedHat' %}
 -w /etc/modprobe.conf -p wa -k modprobe
+{% endif %}
 -w /etc/modprobe.d -p wa -k modprobe
 
 ## KExec usage (all actions)
@@ -112,16 +114,20 @@
 
 # Special Software ------------------------------------------------------------
 
-## GDS specific secrets
--w /etc/puppet/ssl -p wa -k puppet_ssl
+## GDS specific secrets (see 40)
+# -w /etc/puppet/ssl -p wa -k puppet_ssl
 
+{% if BESClient is defined and BESClient.stat.exists %}
 ## IBM Bigfix BESClient
 -a always,exit -F arch=b64 -S open -F dir=/opt/BESClient -F success=0 -k soft_besclient
 -w /var/opt/BESClient/ -p wa -k soft_besclient
 
+{% endif %}
+{% if etcchef is defined and etcchef.stat.exists %}
 ## CHEF https://www.chef.io/chef/
 -w /etc/chef -p wa -k soft_chef
 
+{% endif %}
 ### Docker
 -w /usr/bin/dockerd -k docker
 -w /usr/bin/docker -k docker
@@ -129,8 +135,10 @@
 -w /usr/bin/docker-runc -k docker
 -w /var/lib/docker -k docker
 -w /etc/docker -k docker
+{% if ansible_os_family == 'RedHat' %}
 -w /etc/sysconfig/docker -k docker
 -w /etc/sysconfig/docker-storage -k docker
+{% endif %}
 -w /usr/lib/systemd/system/docker.service -k docker
 
 ### Kubelet

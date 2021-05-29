@@ -19,6 +19,21 @@
       changed_when: false
       check_mode: no
 
+    - name: Check if /etc/puppet/ssl exists
+      stat:
+        path: /etc/puppet/ssl
+      register: etcpuppet
+
+    - name: Check if /etc/chef exists
+      stat:
+        path: /etc/chef
+      register: etcchef
+
+    - name: Check if /opt/BESClient exists
+      stat:
+        path: /opt/BESClient
+      register: BESClient
+
     - name: "create auditd rules {{ auditd_confdir }} directory"
       file:
         path: "{{ auditd_confdir }}"
