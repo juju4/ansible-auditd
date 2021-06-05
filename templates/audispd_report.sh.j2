@@ -26,7 +26,7 @@ egrep 'AVC.*apparmor="DENIED"' $f | cut -d ' ' -f 9,10,11 | sort | uniq -c | sor
 echo "*** SYSCALL per keyword"
 grep SYSCALL $f | cut -d ' ' -f 33 | sort | uniq -c | sort -nr
 echo "*** SYSCALL per syscall,exe,keyword"
-grep SYSCALL $f | cut -d ' ' -f 10,32,33 | sort | uniq -c | sort -nrA
+grep SYSCALL $f | cut -d ' ' -f 10,32,33 | sort | uniq -c | sort -nr
 
 cut_f="10,11,20,21,32,33"
 #cut_f="9,10,19,20,31,32"
