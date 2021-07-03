@@ -1,58 +1,62 @@
 #!/bin/sh
-# TODO: filter rootcmd, sigkill, tmp_write,time-change
+
+export export PATH=/usr/bin:/bin
+umask 077
 
 f=/var/log/audispd/audispd.log
-date=`date +%Y%m%d`
+date=$(date +%Y%m%d)
 echo
 echo
-echo "      AUDISPD DAILY REPORT $date for $f"
+echo "      AUDISPD DAILY REPORT ${date} for ${f}"
 echo
 echo
 
 # Small extract to validate file and fields
-head -5 $f
+echo "*** head"
+head -5 "${f}"
 echo
 
 echo "*** per type+syscall+name"
-cut -d ' ' -f 7,10,32 $f | sort | uniq -c | sort -nr | head -20
+cut -d ' ' -f 7,10,32 "${f}" | sort | uniq -c | sort -nr | head -20
 
 echo "*** SECCOMP uid+exe+syscall"
-grep SECCOMP $f | cut -d ' ' -f 10,15,18 | sort | uniq -c | sort -nr | head -20
+grep SECCOMP "${f}" | cut -d ' ' -f 10,15,18 | sort | uniq -c | sort -nr | head -20
 echo "*** AVC apparmor action+operation+profile"
-grep AVC $f | cut -d ' ' -f 9,10,11 | sort | uniq -c | sort -nr | head -20
+grep AVC "${f}" | cut -d ' ' -f 9,10,11 | sort | uniq -c | sort -nr | head -20
 echo "*** AVC apparmor denied action+operation+profile"
-egrep 'AVC.*apparmor="DENIED"' $f | cut -d ' ' -f 9,10,11 | sort | uniq -c | sort -nr | head -20
+grep -E 'AVC.*apparmor="DENIED"' "${f}" | cut -d ' ' -f 9,10,11 | sort | uniq -c | sort -nr | head -20
 
 echo "*** SYSCALL per keyword"
-grep SYSCALL $f | cut -d ' ' -f 33 | sort | uniq -c | sort -nr
+grep SYSCALL "${f}" | cut -d ' ' -f 33 | sort | uniq -c | sort -nr
 echo "*** SYSCALL per syscall,exe,keyword"
-grep SYSCALL $f | cut -d ' ' -f 10,32,33 | sort | uniq -c | sort -nr
+grep SYSCALL "${f}" | cut -d ' ' -f 10,32,33 | sort | uniq -c | sort -nr
 
-cut_f="10,11,20,21,32,33"
-#cut_f="9,10,19,20,31,32"
+cut_f="10,11,20,21,31,32,33"
+#cut_f="9,10,19,20,30,31,32"
 echo "*** rootcmd"
-grep 'key="rootcmd"' $f | cut -d ' ' -f $cut_f | sort | uniq -c | sort -nr | head -20
+grep 'key="rootcmd"' "${f}" | cut -d ' ' -f $cut_f | sort | uniq -c | sort -nr | head -20
 echo "*** sigkill"
-grep 'key="sigkill"' $f | cut -d ' ' -f $cut_f | sort | uniq -c | sort -nr
+grep 'key="sigkill"' "${f}" | cut -d ' ' -f $cut_f | sort | uniq -c | sort -nr
 echo "*** tmp_write"
-grep 'key="tmp_write"' $f | cut -d ' ' -f $cut_f | sort | uniq -c | sort -nr
+grep 'key="tmp_write"' "${f}" | cut -d ' ' -f $cut_f | sort | uniq -c | sort -nr
 echo "*** time-change"
-grep 'key="time-change"' $f | cut -d ' ' -f $cut_f | sort | uniq -c | sort -nr
+grep 'key="time-change"' "${f}" | cut -d ' ' -f $cut_f | sort | uniq -c | sort -nr
 echo "*** recon"
-grep 'key="recon"' $f | cut -d ' ' -f $cut_f | sort | uniq -c | sort -nr
+grep 'key="recon"' "${f}" | cut -d ' ' -f $cut_f | sort | uniq -c | sort -nr
 echo "*** admin_user_home"
-grep 'key="admin_user_home"' $f | cut -d ' ' -f $cut_f | sort | uniq -c | sort -nr
+grep 'key="admin_user_home"' "${f}" | cut -d ' ' -f $cut_f | sort | uniq -c | sort -nr
 echo "*** sensitive_file"
-grep 'key="sensitive_file"' $f | cut -d ' ' -f $cut_f | sort | uniq -c | sort -nr
+grep 'key="sensitive_file"' "${f}" | cut -d ' ' -f $cut_f | sort | uniq -c | sort -nr
 
 echo "*** sensitive_file CREATE+DELETE"
-tmpfile=`mktemp /var/tmp/tmp-audispd-report-XXX`
-tmpfile2=`mktemp /var/tmp/tmp-audispd-report2-XXX`
-egrep ' type=PATH .* name="(/etc|/var/www)/.*".*nametype=(CREATE|DELETE)' $f | cut -d ' ' -f 10,17,14 | sort | uniq -c | sort -nr > $tmpfile && \
-	echo -n "Total unique files: "`cat $tmpfile | wc -l` && echo && \
-        echo -n "Total unique apt .#lk0x files: "`egrep '/etc/(apt|apt/trusted.gpg.d)/\.#lk0x*' $tmpfile | wc -l` && \
+tmpfile=$(mktemp /var/tmp/tmp-audispd-report-XXX)
+tmpfile2=$(mktemp /var/tmp/tmp-audispd-report2-XXX)
+grep -E ' type=PATH .* name="(/etc|/var/www)/.*".*nametype=(CREATE|DELETE)' "${f}" | cut -d ' ' -f 10,17,14 | sort | uniq -c | sort -nr > "${tmpfile}" && \
+	echo -n "Total unique files: $(wc -l < "${tmpfile}")" && echo && \
+	echo -n "Total unique apt .#lk0x files: $(grep -Ec '/etc/(apt|apt/trusted.gpg.d)/\.#lk0x*' "${tmpfile}")" && \
 	echo && \
-	egrep -v '/etc/(apt|apt/trusted.gpg.d)/\.#lk0x*' $tmpfile > $tmpfile2 && \
-	head -20 $tmpfile2 && echo "[...]" && tail -20 $tmpfile2
+	grep -vE '/etc/(apt|apt/trusted.gpg.d)/\.#lk0x*' "${tmpfile}" > "${tmpfile2}" && \
+	head -20 "${tmpfile2}" && echo "[...]" && tail -20 "${tmpfile2}"
 
+rm "${tmpfile}" "${tmpfile2}"
 find {{ audispd_reporting_dest }} -name 'audispd-report-*' -mtime +{{ audispd_logrotate_days|int }} -exec rm {} \; 2>/dev/null
