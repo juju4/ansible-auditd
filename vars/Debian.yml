@@ -2,5 +2,5 @@
 
 auditd_pkg: auditd
 
-syslog_user: syslog
+syslog_user: root
 syslog_group: adm
