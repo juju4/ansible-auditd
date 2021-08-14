@@ -35,6 +35,7 @@
     dest: /etc/rsyslog.d/30-audispd.conf
     mode: '0644'
     backup: "{{ auditd_backup | default(false) }}"
+    validate: 'rsyslogd -N2 -f %s'
   notify:
     - restart rsyslog
 
@@ -46,6 +47,9 @@
     value: 'yes'
     mode: '0640'
     backup: "{{ auditd_backup | default(false) }}"
+  notify:
+    - restart auditd
+    - restart auditd - rhel7
 
 # only if file, not if remote syslog
 - name: Debug | audisp_syslog_target
