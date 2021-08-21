@@ -4,7 +4,6 @@
   command: augenrules
   when: augenrules_file.stat.exists
 
-
 - name: restart auditd - suse
   systemd:
       name: auditd
@@ -13,7 +12,6 @@
     not (ansible_virtualization_type is defined and
           (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")
         ) and ansible_os_family == "Suse"
-
 
 - name: restart auditd
   service:
@@ -29,8 +27,8 @@
     )
 
 ## https://groups.google.com/forum/#!topic/ansible-project/pv1h1Ne7nSk
-- name: restart auditd - rhel7
-  command: "service auditd restart"
+- name: restart auditd - rhel7+
+  command: "service auditd restart"  # noqa command-instead-of-module
   environment:
       PATH: '/usr/sbin:/usr/bin:/sbin:/bin'
   args:

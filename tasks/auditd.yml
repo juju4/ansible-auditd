@@ -74,7 +74,7 @@
       notify:
         - augenrules
         - restart auditd
-        - restart auditd - rhel7
+        - restart auditd - rhel7+
         - restart auditd - suse
 
     # /sbin/augenrules isn't present to generate /etc/audit/audit.rules
@@ -94,7 +94,7 @@
       with_items: "{{ auditd_conf_lineinfile | default([]) }}"
       notify:
         - restart auditd
-        - restart auditd - rhel7
+        - restart auditd - rhel7+
         - restart auditd - suse
 
     - name: Check if grub is present
