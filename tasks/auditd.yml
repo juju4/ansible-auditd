@@ -151,3 +151,6 @@
   debug: var=audisp_syslog_enable
 - include: rsyslog-audisp.yml
   when: audisp_syslog_enable|bool
+
+- import_tasks: laurel.yml
+  when: auditd_laurel_enable|bool and ansible_architecture == 'x86_64'
