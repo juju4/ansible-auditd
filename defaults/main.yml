@@ -98,7 +98,7 @@ auditd_exclusion_rules2:
   - '-a never,exit -F arch=b64 -F uid=0 -F auid=4294967295 -S execve -F exe=/usr/bin/dirname -F success=0'
   - '-a never,exit -F arch=b64 -F uid=0 -F auid=0 -S execve -F exe=/usr/bin/dirname -F success=0'
 
-auditd_exclusion_rules_debian:
+auditd_exclusion_rules_debian_b64:
   - '-a never,exit -F arch=b64 -F uid=0 -F auid=4294967295 -S execve -F exe=/usr/lib/sysstat/sadc'
   # time-change
   - '-a never,exit -F arch=b64 -F uid=111 -F auid=4294967295 -S adjtimex -F exe=/usr/sbin/ntpd -F success=0'
@@ -111,7 +111,7 @@ auditd_exclusion_rules_debian:
   # FIXME!
   - '-a exit,never -F arch=b64 -F uid=0 -F auid=4294967295 -S kill -F exe=/bin/dash -F success=0'
   - '-a exit,never -F arch=b64 -F uid=0 -F auid=4294967295 -S kill -F exe=/lib/systemd/systemd -F success=0'
-auditd_exclusion_rules_redhat:
+auditd_exclusion_rules_redhat_b64:
   - '-a never,exit -F arch=b64 -F uid=0 -F auid=4294967295 -S execve -F exe=/usr/lib64/sa/sadc'
   - '-a never,exit -F arch=b64 -S adjtimex -F auid=unset -F uid=_chrony -F subj_type=chronyd_t'
 

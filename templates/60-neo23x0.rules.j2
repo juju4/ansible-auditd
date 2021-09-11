@@ -4,7 +4,9 @@
 -a always,exit -F perm=x -F auid!=-1 -F path=/sbin/insmod -k modules
 -a always,exit -F perm=x -F auid!=-1 -F path=/sbin/modprobe -k modules
 -a always,exit -F perm=x -F auid!=-1 -F path=/sbin/rmmod -k modules
+{% if ansible_userspace_bits == '64' %}
 -a always,exit -F arch=b64 -S finit_module -S init_module -S delete_module -F auid!=-1 -k modules
+{% endif %}
 -a always,exit -F arch=b32 -S finit_module -S init_module -S delete_module -F auid!=-1 -k modules
 
 ## Modprobe configuration
@@ -14,16 +16,22 @@
 -w /etc/modprobe.d -p wa -k modprobe
 
 ## KExec usage (all actions)
+{% if ansible_userspace_bits == '64' %}
 -a always,exit -F arch=b64 -S kexec_load -k KEXEC
+{% endif %}
 -a always,exit -F arch=b32 -S sys_kexec_load -k KEXEC
 
 # Change swap (only attributable)
+{% if ansible_userspace_bits == '64' %}
 -a always,exit -F arch=b64 -S swapon -S swapoff -F auid!=-1 -k swap
+{% endif %}
 -a always,exit -F arch=b32 -S swapon -S swapoff -F auid!=-1 -k swap
 
 ## Time
 -a always,exit -F arch=b32 -S adjtimex -S settimeofday -S clock_settime -k time
+{% if ansible_userspace_bits == '64' %}
 -a always,exit -F arch=b64 -S adjtimex -S settimeofday -S clock_settime -k time
+{% endif %}
 
 ## root ssh key tampering
 -w /root/.ssh -p wa -k rootkey
@@ -75,13 +83,21 @@
 ### These rules watch for code injection by the ptrace facility.
 ### This could indicate someone trying to do something bad or just debugging
 -a always,exit -F arch=b32 -S ptrace -F a0=0x4 -k code_injection
+{% if ansible_userspace_bits == '64' %}
 -a always,exit -F arch=b64 -S ptrace -F a0=0x4 -k code_injection
+{% endif %}
 -a always,exit -F arch=b32 -S ptrace -F a0=0x5 -k data_injection
+{% if ansible_userspace_bits == '64' %}
 -a always,exit -F arch=b64 -S ptrace -F a0=0x5 -k data_injection
+{% endif %}
 -a always,exit -F arch=b32 -S ptrace -F a0=0x6 -k register_injection
+{% if ansible_userspace_bits == '64' %}
 -a always,exit -F arch=b64 -S ptrace -F a0=0x6 -k register_injection
+{% endif %}
 -a always,exit -F arch=b32 -S ptrace -k tracing
+{% if ansible_userspace_bits == '64' %}
 -a always,exit -F arch=b64 -S ptrace -k tracing
+{% endif %}
 
 
 # Software Management ---------------------------------------------------------
@@ -119,7 +135,9 @@
 
 {% if BESClient is defined and BESClient.stat.exists %}
 ## IBM Bigfix BESClient
+{% if ansible_userspace_bits == '64' %}
 -a always,exit -F arch=b64 -S open -F dir=/opt/BESClient -F success=0 -k soft_besclient
+{% endif %}
 -w /var/opt/BESClient/ -p wa -k soft_besclient
 
 {% endif %}
@@ -148,15 +166,23 @@
 
 ### Unsuccessful Creation
 -a always,exit -F arch=b32 -S creat,link,mknod,mkdir,symlink,mknodat,linkat,symlinkat -F exit=-EACCES -k file_creation
+{% if ansible_userspace_bits == '64' %}
 -a always,exit -F arch=b64 -S mkdir,creat,link,symlink,mknod,mknodat,linkat,symlinkat -F exit=-EACCES -k file_creation
+{% endif %}
 -a always,exit -F arch=b32 -S link,mkdir,symlink,mkdirat -F exit=-EPERM -k file_creation
+{% if ansible_userspace_bits == '64' %}
 -a always,exit -F arch=b64 -S mkdir,link,symlink,mkdirat -F exit=-EPERM -k file_creation
+{% endif %}
 
 ### Unsuccessful Modification
 -a always,exit -F arch=b32 -S rename -S renameat -S truncate -S chmod -S setxattr -S lsetxattr -S removexattr -S lremovexattr -F exit=-EACCES -k file_modification
+{% if ansible_userspace_bits == '64' %}
 -a always,exit -F arch=b64 -S rename -S renameat -S truncate -S chmod -S setxattr -S lsetxattr -S removexattr -S lremovexattr -F exit=-EACCES -k file_modification
+{% endif %}
 -a always,exit -F arch=b32 -S rename -S renameat -S truncate -S chmod -S setxattr -S lsetxattr -S removexattr -S lremovexattr -F exit=-EPERM -k file_modification
+{% if ansible_userspace_bits == '64' %}
 -a always,exit -F arch=b64 -S rename -S renameat -S truncate -S chmod -S setxattr -S lsetxattr -S removexattr -S lremovexattr -F exit=-EPERM -k file_modification
+{% endif %}
 
 {% if ansible_userspace_bits != '32' %}
 ## 32bit API Exploitation

@@ -3,9 +3,13 @@
 # Log all commands executed by nobody/webserver
 ###################
 {% if ansible_os_family == 'RedHat' %}
+{% if ansible_userspace_bits == '64' %}
 -a exit,always -F arch=b64 -F euid=99 -S execve -k nobodycmd
+{% endif %}
 -a exit,always -F arch=b32 -F euid=99 -S execve -k nobodycmd
 {% else %}
+{% if ansible_userspace_bits == '64' %}
 -a exit,always -F arch=b64 -F euid=65534 -S execve -k nobodycmd
+{% endif %}
 -a exit,always -F arch=b32 -F euid=65534 -S execve -k nobodycmd
 {% endif %}

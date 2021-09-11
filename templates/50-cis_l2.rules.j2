@@ -6,10 +6,14 @@
 # Changes to the time
 ###################
 -a exit,always -F arch=b32 -S stime -S clock_settime -k time
+{% if ansible_userspace_bits == '64' %}
 -a exit,always -F arch=b64 -S clock_settime -k time
 -a always,exit -F arch=b64 -S adjtimex -S settimeofday -k time-change
+{% endif %}
 -a always,exit -F arch=b32 -S adjtimex -S settimeofday -S stime -k time-change
+{% if ansible_userspace_bits == '64' %}
 -a always,exit -F arch=b64 -S clock_settime -k time-change
+{% endif %}
 -a always,exit -F arch=b32 -S clock_settime -k time-change
 -w /etc/localtime -p wa -k time-change
 
@@ -21,7 +25,9 @@
 -w /etc/security/opasswd -p wa -k identity
 
 # CIS 4.1.6
+{% if ansible_userspace_bits == '64' %}
 -a exit,always -F arch=b64 -S sethostname -S setdomainname -k system-locale
+{% endif %}
 -a exit,always -F arch=b32 -S sethostname -S setdomainname -k system-locale
 -w /etc/issue -p wa -k system-locale
 -w /etc/issue.net -p wa -k system-locale
@@ -50,21 +56,32 @@
 -w /var/log/btmp -p wa -k logins
 
 # CIS 4.1.10 Discretionary Access Control (DAC) modifications
+{% if ansible_userspace_bits == '64' %}
 -a always,exit -F arch=b64 -S chmod -S fchmod -S fchmodat -F auid>=500 -F auid!=4294967295 -k perm_mod
+{% endif %}
 -a always,exit -F arch=b32 -S chmod -S fchmod -S fchmodat -F auid>=500 -F auid!=4294967295 -k perm_mod
+{% if ansible_userspace_bits == '64' %}
 -a always,exit -F arch=b64 -S chown -S fchown -S fchownat -S lchown -F auid>=500 -F auid!=4294967295 -k perm_mod
+{% endif %}
 -a always,exit -F arch=b32 -S chown -S fchown -S fchownat -S lchown -F auid>=500 -F auid!=4294967295 -k perm_mod
+{% if ansible_userspace_bits == '64' %}
 -a always,exit -F arch=b64 -S setxattr -S lsetxattr -S fsetxattr -S removexattr -S lremovexattr -S fremovexattr -F auid>=500 -F auid!=4294967295 -k perm_mod
+{% endif %}
 -a always,exit -F arch=b32 -S setxattr -S lsetxattr -S fsetxattr -S removexattr -S lremovexattr -S fremovexattr -F auid>=500 -F auid!=4294967295 -k perm_mod
 
 # CIS 4.1.11
 ###################
 ## Capture all failures to access on critical elements
 ###################
+{% if ansible_userspace_bits == '64' %}
 -a always,exit -F arch=b64 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EACCES -F auid>=500 -F auid!=4294967295 -k access
+{% endif %}
 -a always,exit -F arch=b32 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EACCES -F auid>=500 -F auid!=4294967295 -k access
+{% if ansible_userspace_bits == '64' %}
 -a always,exit -F arch=b64 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EPERM -F auid>=500 -F auid!=4294967295 -k access
+{% endif %}
 -a always,exit -F arch=b32 -S creat -S open -S openat -S truncate -S ftruncate -F exit=-EPERM -F auid>=500 -F auid!=4294967295 -k access
+{% if ansible_userspace_bits == '64' %}
 -a exit,always -F arch=b64 -S open -F dir=/etc -F success=0 -k unauthedfileacess
 -a exit,always -F arch=b64 -S open -F dir=/bin -F success=0 -k unauthedfileacess
 -a exit,always -F arch=b64 -S open -F dir=/home -F success=0 -k unauthedfileacess
@@ -74,6 +91,7 @@
 -a exit,always -F arch=b64 -S open -F dir=/usr/local/bin -F success=0 -k unauthedfileacess
 -a exit,always -F arch=b64 -S open -F dir=/usr/sbin -F success=0 -k unauthedfileacess
 -a exit,always -F arch=b64 -S open -F dir=/var -F success=0 -k unauthedfileacess
+{% endif %}
 
 # CIS 4.1.12 Ensure use of privileged commands is collected
 # $ find / -perm /u=s,g=s -type f 2>/dev/null | awk '{ print "-a always,exit -F path=" $1 " -F perm=x -F auid>=1000 -F auid!=4294967295 -k privileged" }'
@@ -82,11 +100,15 @@
 {% endfor %}
 
 # CIS 4.1.13
+{% if ansible_userspace_bits == '64' %}
 -a always,exit -F arch=b64 -S mount -F auid>=500 -F auid!=4294967295 -k mounts
+{% endif %}
 -a always,exit -F arch=b32 -S mount -F auid>=500 -F auid!=4294967295 -k mounts
 
 # CIS 4.1.14 File Deletion Events by User
+{% if ansible_userspace_bits == '64' %}
 -a always,exit -F arch=b64 -S unlink -S unlinkat -S rename -S renameat -F auid>=500 -F auid!=4294967295 -k delete
+{% endif %}
 -a always,exit -F arch=b32 -S unlink -S unlinkat -S rename -S renameat -F auid>=500 -F auid!=4294967295 -k delete
 
 # CIS 4.1.15

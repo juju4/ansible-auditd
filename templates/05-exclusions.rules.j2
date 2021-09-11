@@ -11,14 +11,18 @@
 
 {% if (ansible_os_family == "Debian") %}
 # Debian family
-{% for r in auditd_exclusion_rules_debian %}
+{% if ansible_userspace_bits == '64' %}
+{% for r in auditd_exclusion_rules_debian_b64 %}
 {{ r }}
 {% endfor %}
+{% endif %}
 {% endif %}
 
 {% if (ansible_os_family == "RedHat") %}
 # RedHat family
-{% for r in auditd_exclusion_rules_redhat %}
+{% if ansible_userspace_bits == '64' %}
+{% for r in auditd_exclusion_rules_redhat_b64 %}
 {{ r }}
 {% endfor %}
+{% endif %}
 {% endif %}

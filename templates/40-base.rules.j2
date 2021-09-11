@@ -3,13 +3,17 @@
 # Special files
 ###################
 -a exit,always -F arch=b32 -S mknod -S mknodat -k specialfiles
+{% if ansible_userspace_bits == '64' %}
 -a exit,always -F arch=b64 -S mknod -S mknodat -k specialfiles
+{% endif %}
 
 ###################
 # Mount operations
 ###################
 -a exit,always -F arch=b32 -S mount -S umount -S umount2 -k mount
+{% if ansible_userspace_bits == '64' %}
 -a exit,always -F arch=b64 -S mount -S umount2 -k mount
+{% endif %}
 
 ###################
 # Use of stunnel
@@ -119,7 +123,9 @@
 # Hostname
 ###################
 -a exit,always -F arch=b32 -S sethostname -k hostname
+{% if ansible_userspace_bits == '64' %}
 -a exit,always -F arch=b64 -S sethostname -k hostname
+{% endif %}
 
 ###################
 # Changes to issue
