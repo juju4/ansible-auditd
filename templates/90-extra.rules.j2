@@ -12,12 +12,20 @@
 {% endif %}
 
 # suspicious x86 syscalls
+{% if ansible_architecture != "armv7l" %}
 -a exit,always -F arch=b32 -S ioperm -S modify_ldt -k suspicious_syscalls
+{% else %}
+-a exit,always -F arch=b32 -S ioperm -k suspicious_syscalls
+{% endif %}
 {% if ansible_userspace_bits == '64' %}
 -a exit,always -F arch=b64 -S ioperm -S modify_ldt -k suspicious_syscalls
 {% endif %}
 # uncommon and dangerous syscalls
+{% if ansible_architecture != "armv7l" %}
 -a exit,always -F arch=b32 -S get_kernel_syms -S ptrace -k uncommon_syscalls
+{% else %}
+-a exit,always -F arch=b32 -S ptrace -k uncommon_syscalls
+{% endif %}
 {% if ansible_userspace_bits == '64' %}
 -a exit,always -F arch=b64 -S get_kernel_syms -S ptrace -k uncommon_syscalls
 {% endif %}

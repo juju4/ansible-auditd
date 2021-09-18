@@ -19,7 +19,10 @@
 {% if ansible_userspace_bits == '64' %}
 -a always,exit -F arch=b64 -S kexec_load -k KEXEC
 {% endif %}
+{% if ansible_architecture != "armv7l" %}
+{# augenrules errors on raspberrypi3 #}
 -a always,exit -F arch=b32 -S sys_kexec_load -k KEXEC
+{% endif %}
 
 # Change swap (only attributable)
 {% if ansible_userspace_bits == '64' %}
