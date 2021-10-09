@@ -1,0 +1,62 @@
+#!/bin/sh
+
+export export PATH=/usr/bin:/bin
+umask 077
+
+f=/var/log/laurel/audit.log
+date=$(date +%Y%m%d)
+echo
+echo
+echo "     AUDITD DAILY REPORT ${date} for ${f} - laurel"
+echo
+echo
+
+echo "*** per type"
+jq -r 'keys' "${f}" | egrep -v '(\]|\[)' | sed 's/,$//' | sort | uniq -c | sort -nr | head -20
+jq -r 'keys | nth(1)' "${f}" | sort | uniq -c | sort -nr
+#echo "*** per type+syscall+name"
+#cut -d ' ' -f 7,10,32 "${f}" | sort | uniq -c | sort -nr | head -20
+
+echo "*** SECCOMP uid+exe+syscall"
+jq -r 'select(.SECCOMP.exe) | (.SECCOMP.uid|tostring) + " " + .SECCOMP.exe + " " + (.SECCOMP.syscall|tostring)' "${f}" | sort | uniq -c | sort -nr | head -20
+#echo "*** AVC apparmor action+operation+profile"
+#grep AVC "${f}" | cut -d ' ' -f 9,10,11 | sort | uniq -c | sort -nr | head -20
+#echo "*** AVC apparmor denied action+operation+profile"
+#grep -E 'AVC.*apparmor="DENIED"' "${f}" | cut -d ' ' -f 9,10,11 | sort | uniq -c | sort -nr | head -20
+
+echo "*** SYSCALL per keyword"
+jq -r 'select(.SYSCALL.exe) | .SYSCALL.key' "${f}" | sort | uniq -c | sort -nr | head -20
+echo "*** SYSCALL per syscall,exe,keyword"
+jq -r 'select(.SYSCALL.exe) | (.SYSCALL.syscall|tostring) + " " + .SYSCALL.exe + " " + (.SYSCALL.key)' "${f}" | sort | uniq -c | sort -nr | head -20
+
+echo "*** rootcmd (syscall, success, auid, uid, comm, exe, parent.argv joined)"
+jq -r 'select(.SYSCALL.key == "rootcmd") | (.SYSCALL.syscall|tostring) + " " + .SYSCALL.success + " " + (.SYSCALL.auid|tostring) + " " + (.SYSCALL.uid|tostring) + " " + .SYSCALL.comm + " " + .SYSCALL.exe  + " " + (.PARENT_INFO.ARGV|join("|"))' "${f}" | sort | uniq -c | sort -nr | head -20
+echo "*** sigkill"
+jq -r 'select(.SYSCALL.key == "sigkill") | (.SYSCALL.syscall|tostring) + " " + .SYSCALL.success + " " + (.SYSCALL.auid|tostring) + " " + (.SYSCALL.uid|tostring) + " " + .SYSCALL.comm + " " + .SYSCALL.exe  + " " + (.PARENT_INFO.ARGV|join("|"))' "${f}" | sort | uniq -c | sort -nr | head -20
+echo "*** tmp_write"
+jq -r 'select(.SYSCALL.key == "tmp_write") | (.SYSCALL.syscall|tostring) + " " + .SYSCALL.success + " " + (.SYSCALL.auid|tostring) + " " + (.SYSCALL.uid|tostring) + " " + .SYSCALL.comm + " " + .SYSCALL.exe  + " " + (.PARENT_INFO.ARGV|join("|"))' "${f}" | sort | uniq -c | sort -nr | head -20
+echo "*** time-change"
+jq -r 'select(.SYSCALL.key == "time-change") | (.SYSCALL.syscall|tostring) + " " + .SYSCALL.success + " " + (.SYSCALL.auid|tostring) + " " + (.SYSCALL.uid|tostring) + " " + .SYSCALL.comm + " " + .SYSCALL.exe  + " " + (.PARENT_INFO.ARGV|join("|"))' "${f}" | sort | uniq -c | sort -nr | head -20
+echo "*** recon"
+jq -r 'select(.SYSCALL.key == "recon") | (.SYSCALL.syscall|tostring) + " " + .SYSCALL.success + " " + (.SYSCALL.auid|tostring) + " " + (.SYSCALL.uid|tostring) + " " + .SYSCALL.comm + " " + .SYSCALL.exe  + " " + (.PARENT_INFO.ARGV|join("|"))' "${f}" | sort | uniq -c | sort -nr | head -20
+echo "*** admin_user_home"
+jq -r 'select(.SYSCALL.key == "admin_user_home") | (.SYSCALL.syscall|tostring) + " " + .SYSCALL.success + " " + (.SYSCALL.auid|tostring) + " " + (.SYSCALL.uid|tostring) + " " + .SYSCALL.comm + " " + .SYSCALL.exe  + " " + (.PARENT_INFO.ARGV|join("|"))' "${f}" | sort | uniq -c | sort -nr | head -20
+echo "*** sensitive_file"
+jq -r 'select(.SYSCALL.key == "sensitive_file") | (.SYSCALL.syscall|tostring) + " " + .SYSCALL.success + " " + (.SYSCALL.auid|tostring) + " " + (.SYSCALL.uid|tostring) + " " + .SYSCALL.comm + " " + .SYSCALL.exe  + " " + (.PARENT_INFO.ARGV|join("|"))' "${f}" | sort | uniq -c | sort -nr | head -20
+
+echo "*** sensitive_file -CREATE+DELETE- (name, nametype, exe, parent)"
+jq -r 'select(.SYSCALL.key == "sensitive_file") | .PATH[0].name + " " + .PATH[0].nametype + " " + .SYSCALL.exe + " " + (.PARENT_INFO.ARGV|join("|"))' "${f}" | sort | uniq -c | sort -nr | head -20
+#tmpfile=$(mktemp /var/tmp/tmp-audispd-report-XXX)
+#tmpfile2=$(mktemp /var/tmp/tmp-audispd-report2-XXX)
+#grep -E ' type=PATH .* name="(/etc|/var/www)/.*".*nametype=(CREATE|DELETE)' "${f}" | cut -d ' ' -f 10,17,14 | sort | uniq -c | sort -nr > "${tmpfile}" && \
+#       echo -n "Total unique files: $(wc -l < "${tmpfile}")" && echo && \
+#       echo -n "Total unique apt .#lk0x files: $(grep -Ec '/etc/(apt|apt/trusted.gpg.d)/\.#lk0x*' "${tmpfile}")" && \
+#       echo && \
+#       grep -vE '/etc/(apt|apt/trusted.gpg.d)/\.#lk0x*' "${tmpfile}" > "${tmpfile2}" && \
+#       head -20 "${tmpfile2}" && echo "[...]" && tail -20 "${tmpfile2}"
+
+#rm "${tmpfile}" "${tmpfile2}"
+find /var/tmp -name 'auditd-laurel-report-*' -mtime +10 -exec rm {} \; 2>/dev/null
+
+# misc
+jq -r 'select(.CONFIG_CHANGE.key) | .CONFIG_CHANGE.key' "${f}" | sort | uniq -c | sort -nr | head -20

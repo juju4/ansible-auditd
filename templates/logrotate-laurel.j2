@@ -1,0 +1,16 @@
+{{ ansible_managed | comment }}
+## /etc/logrotate.d/laurel
+/var/log/laurel/audit.log {
+    rotate {{ auditd_logrotate_days | default(30) | int }}
+    daily
+    missingok
+    delaycompress
+    compress
+    create 600 {{ auditd_laurel_user }} {{ auditd_laurel_user }}
+    sharedscripts
+{% if auditd_reporting %}
+    prerotate
+        test ! -x /usr/local/scripts/{{ auditd_laurel_reporting_template | basename }} || sudo -u {{ auditd_laurel_user }} /usr/local/scripts/{{ auditd_laurel_reporting_template | basename }} 2>&1 | sudo -u {{ auditd_laurel_user }} tee {{ audispd_reporting_dest }}/auditd-laurel-report-`date +%Y%m%d` >/dev/null
+    endscript
+{% endif %}
+}
