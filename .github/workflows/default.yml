@@ -63,9 +63,22 @@ jobs:
           sudo cat /etc/audit/audit.rules
           sudo auditctl -l
         continue-on-error: true
+      - name: After script - laurel
+        run: |
+          sudo cat /etc/laurel/config.toml
+          sudo cat /etc/audisp/plugins.d/laurel.conf
+          /usr/local/bin/laurel -d -c /etc/laurel/config.toml; echo $?
+        continue-on-error: true
       - name: After script - rsyslog
         run: |
           cat /etc/rsyslog.d/30-audispd.conf
           sudo cat /etc/audisp/plugins.d/syslog.conf
           sudo tail -100 /var/log/audit/audit.log
+          sudo -u _laurel tail -100 /var/log/laurel/audit.log
+          sudo -u _laurel tail -5 /var/log/laurel/audit.log | jq
+        continue-on-error: true
+      - name: After script - report
+        run: |
+          sudo /usr/local/scripts/audispd_report.sh
+          sudo -u _laurel /usr/local/scripts/auditd_laurel_report.sh
         continue-on-error: true
