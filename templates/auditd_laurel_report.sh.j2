@@ -58,5 +58,5 @@ jq -r 'select(.SYSCALL.key == "sensitive_file") | .PATH[0].name + " " + .PATH[0]
 #rm "${tmpfile}" "${tmpfile2}"
 find /var/tmp -name 'auditd-laurel-report-*' -mtime +10 -exec rm {} \; 2>/dev/null
 
-# misc
+echo "*** misc .CONFIG_CHANGE.key"
 jq -r 'select(.CONFIG_CHANGE.key) | .CONFIG_CHANGE.key' "${f}" | sort | uniq -c | sort -nr | head -20
