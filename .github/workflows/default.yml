@@ -67,7 +67,7 @@ jobs:
         run: |
           sudo cat /etc/laurel/config.toml
           sudo cat /etc/audisp/plugins.d/laurel.conf
-          /usr/local/bin/laurel -d -c /etc/laurel/config.toml; echo $?
+          /usr/local/sbin/laurel -d -c /etc/laurel/config.toml; echo $?
         continue-on-error: true
       - name: After script - rsyslog
         run: |
