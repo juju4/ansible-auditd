@@ -17,9 +17,9 @@ head -5 "${f}"
 echo
 
 echo "*** per type"
-cut -d ' ' -f 7 "${f}" | sort | uniq -c | sort -nr | head -20
+cut -d ' ' -f 8 "${f}" | sort | uniq -c | sort -nr | head -20
 echo "*** per type+syscall+name"
-cut -d ' ' -f 7,10,32 "${f}" | sort | uniq -c | sort -nr | head -20
+cut -d ' ' -f 8,11,33 "${f}" | sort | uniq -c | sort -nr | head -20
 
 echo "*** SECCOMP uid+exe+syscall"
 grep SECCOMP "${f}" | cut -d ' ' -f 10,15,18 | sort | uniq -c | sort -nr | head -20
@@ -29,11 +29,11 @@ echo "*** AVC apparmor denied action+operation+profile"
 grep -E 'AVC.*apparmor="DENIED"' "${f}" | cut -d ' ' -f 9,10,11 | sort | uniq -c | sort -nr | head -20
 
 echo "*** SYSCALL per keyword"
-grep SYSCALL "${f}" | cut -d ' ' -f 33 | sort | uniq -c | sort -nr
+grep SYSCALL "${f}" | cut -d ' ' -f 34 | sort | uniq -c | sort -nr
 echo "*** SYSCALL per syscall,exe,keyword"
-grep SYSCALL "${f}" | cut -d ' ' -f 10,32,33 | sort | uniq -c | sort -nr
+grep SYSCALL "${f}" | cut -d ' ' -f 11,33,34 | sort | uniq -c | sort -nr
 
-cut_f="10,11,20,21,31,32,33"
+cut_f="11,12,21,22,32,33,34"
 #cut_f="9,10,19,20,30,31,32"
 echo "*** rootcmd"
 grep 'key="rootcmd"' "${f}" | cut -d ' ' -f $cut_f | sort | uniq -c | sort -nr | head -20
