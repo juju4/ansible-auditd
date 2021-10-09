@@ -46,8 +46,8 @@ auditd_rules_templates:
 # load first
 # https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/security_guide/sec-audit_record_types
 auditd_exclusion_rules:
-  - '-a always,exclude -F msgtype=CWD'
-  - '-a always,exclude -F msgtype=EOE'
+  # - '-a always,exclude -F msgtype=CWD'  # needed for detections like omigod
+  # - '-a always,exclude -F msgtype=EOE'  # required by laurel
   # - '-a always,exclude -F msgtype=PATH'
   # - '-a always,exclude -F msgtype=PROCTITLE'
   - '-a always,exclude -F msgtype=AVC'
@@ -147,9 +147,12 @@ audispd_reporting_dest: /var/tmp
 audispd_logrotate_days: 10
 
 auditd_laurel_enable: false
-auditd_laurel_url: https://github.com/threathunters-io/laurel/releases/download/v0.1.1/laurel-v0.1.1-x86_64-musl.tar.gz
-auditd_laurel_checksum: 'sha256:cc636ed49e60003d983dab4f224676fa813824e56811c55f59065a861b80a4b1'
+auditd_laurel_url: https://github.com/threathunters-io/laurel/releases/download/v0.1.3/laurel-v0.1.3-x86_64-musl.tar.gz
+auditd_laurel_checksum: 'sha256:fc4110154e2c6e170762172f2fb82f4250f3fb964cdc196a8a845a15508fcc3b'
 auditd_laurel_user: '_laurel'
 auditd_laurel_config: laurel.toml.j2
 auditd_laurel_plugin: laurel.conf.j2
+# Rotate when log file reaches this size (in bytes) - must be big enough to let logrotate handle it
+auditd_laurel_rotatesize: 10000000000
+auditd_laurel_reporting_template: auditd_laurel_report.sh
 install_archives: /var/_install

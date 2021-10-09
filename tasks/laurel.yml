@@ -1,5 +1,11 @@
 ---
 
+- name: Ensure archives folder exists
+  file:
+    dest: "{{ install_archives }}"
+    state: directory
+    mode: '0700'
+
 - name: Fetch laurel binary
   get_url:
     url: "{{ auditd_laurel_url }}"
@@ -43,3 +49,16 @@
   notify:
     - restart auditd
     - restart auditd - rhel7+
+
+- name: Ensure laurel reporting script exists
+  template:
+    src: "{{ auditd_laurel_reporting_template }}.j2"
+    dest: "/usr/local/scripts/{{ auditd_laurel_reporting_template | basename }}"
+    mode: '0755'
+
+- name: add logrotate configuration for laurel log
+  template:
+    src: logrotate-laurel.j2
+    dest: /etc/logrotate.d/laurel
+    mode: '0644'
+    validate: 'logrotate -dv %s'
