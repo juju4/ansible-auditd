@@ -10,7 +10,7 @@
     sharedscripts
 {% if auditd_reporting %}
     prerotate
-        test ! -x /usr/local/scripts/{{ auditd_laurel_reporting_template | basename }} || sudo -u {{ auditd_laurel_user }} /usr/local/scripts/{{ auditd_laurel_reporting_template | basename }} 2>&1 | sudo -u {{ auditd_laurel_user }} tee {{ audispd_reporting_dest }}/auditd-laurel-report-`date +%Y%m%d` >/dev/null
+        test ! -x /usr/local/scripts/{{ auditd_laurel_reporting_template | basename }} || sudo -u {{ auditd_laurel_user }} /usr/local/scripts/{{ auditd_laurel_reporting_template | basename }} 2>&1 >/dev/null
     endscript
 {% endif %}
 }
