@@ -123,7 +123,7 @@
         state: started
         enabled: yes
 
-    - include: reporting.yml
+    - import_tasks: reporting.yml
       when: auditd_reporting
 
     - name: Set fact for monit
@@ -149,7 +149,7 @@
 
 - name: Debug | audisp_syslog_enable
   debug: var=audisp_syslog_enable
-- include: rsyslog-audisp.yml
+- import_tasks: rsyslog-audisp.yml
   when: audisp_syslog_enable|bool
 
 - import_tasks: laurel.yml

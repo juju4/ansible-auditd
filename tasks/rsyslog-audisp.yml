@@ -54,5 +54,5 @@
 # only if file, not if remote syslog
 - name: Debug | audisp_syslog_target
   debug: var=audisp_syslog_target
-- include: logrotate.yml
+- import_tasks: logrotate.yml
   when: "'/var/log/' in audisp_syslog_target"
