@@ -113,9 +113,11 @@
           replace:
             dest: /etc/default/grub
             regexp: '^GRUB_CMDLINE_LINUX="(.*)"'
-            replace: 'GRUB_CMDLINE_LINUX="\1 audit=1"'
+            replace: 'GRUB_CMDLINE_LINUX="\1 audit=1 audit_backlog_limit=8192"'
           when: not auditgrub.stdout
-      when: hasgrub.stat is defined and hasgrub.stat.exists
+      when:
+        - hasgrub.stat is defined and hasgrub.stat.exists
+        - auditd_grub_enable|bool
 
     - name: Enable and start auditd
       service:

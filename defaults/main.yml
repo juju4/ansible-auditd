@@ -5,6 +5,7 @@ audisp_syslog_enable: true
 audisp_syslog_target: /var/log/audispd/audispd.log
 # audisp_syslog_target: @@remotesyslog
 
+auditd_grub_enable: false
 
 auditd_log_tmp: true
 auditd_log_etc: true

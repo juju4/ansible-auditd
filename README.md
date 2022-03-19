@@ -60,6 +60,12 @@ $ vagrant ssh
 
 * As auditd is linked to the kernel, role will not do any change when executed inside containers.
 
+* `watchdog: BUG: soft lockup - CPU#0 stuck for Xs! [kauditd:22]`, `audit: backlog limit exceeded`, `audit: kauditd hold queue overflow`
+observed even with grub `audit_backlog_limit=8192`
+added variable auditd_grub_enable and default false. Use carefully.
+[kauditd hold queue overflow in 4.11, Sep 2017](https://listman.redhat.com/archives/linux-audit/2017-September/msg00081.html)
+[Event overflow during boot, May 2017](https://security-plus-data-science.blogspot.com/2017/05/a-suggested-change-for-rhel-7-disa-stig.html)
+
 ## References
 
 * https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Security_Guide/chap-system_auditing.html
