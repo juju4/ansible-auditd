@@ -3,7 +3,7 @@
 - block:
     # https://github.com/lxc/lxd/issues/2004, only on xenial?
     - name: ensure auditd package is present
-      package:
+      ansible.builtin.package:
         name: "{{ auditd_pkg }}"
         state: present
         update_cache: yes
@@ -11,7 +11,7 @@
       until: pkg_result is success
 
     - name: retrieve suid/sgid files list
-      command: >
+      ansible.builtin.command: >
         find / ! \( -path {{ ' -prune -o -path '.join(auditd_sugid_ignored_paths) }} -prune \)
           -a -perm /u=s,g=s -type f
       register: sugid_files
@@ -20,29 +20,29 @@
       check_mode: no
 
     - name: Check if /etc/puppet/ssl exists
-      stat:
+      ansible.builtin.stat:
         path: /etc/puppet/ssl
       register: etcpuppet
 
     - name: Check if /etc/chef exists
-      stat:
+      ansible.builtin.stat:
         path: /etc/chef
       register: etcchef
 
     - name: Check if /opt/BESClient exists
-      stat:
+      ansible.builtin.stat:
         path: /opt/BESClient
       register: BESClient
 
     - name: "create auditd rules {{ auditd_confdir }} directory"
-      file:
+      ansible.builtin.file:
         path: "{{ auditd_confdir }}"
         state: directory
         mode: '0750'
 
     - block:
         - name: list files in configuration dir
-          command: "ls {{ auditd_confdir }}"
+          ansible.builtin.command: "ls {{ auditd_confdir }}"
           failed_when: no
           changed_when: no
           check_mode: no
@@ -50,7 +50,7 @@
           tags: files
 
         - name: Delete not managed files in configuration directory
-          file:
+          ansible.builtin.file:
             name: "{{ auditd_confdir }}/{{ item }}"
             state: absent
           loop: "{{ confdir_files.stdout_lines }}"
@@ -59,13 +59,13 @@
       when: auditd_manage_configuration_directory
 
     - name: check is augenrules is present
-      stat:
+      ansible.builtin.stat:
         path: "/sbin/augenrules"
       register: augenrules_file
       changed_when: false
 
     - name: configure audit system
-      template:
+      ansible.builtin.template:
         src: "{{ item }}.rules.j2"
         dest: "{{ auditd_confdir }}/{{ item }}.rules"
         mode: '0644'
@@ -79,14 +79,14 @@
 
     # /sbin/augenrules isn't present to generate /etc/audit/audit.rules
     - name: assemble rules into a single file
-      assemble:
+      ansible.builtin.assemble:
         src: "{{ auditd_confdir }}"
         dest: /etc/audit/audit.rules
         mode: '0644'
       when: not augenrules_file.stat.exists
 
     - name: Configure /etc/audit/auditd.conf
-      lineinfile:
+      ansible.builtin.lineinfile:
         dest: /etc/audit/auditd.conf
         regexp: "{{ item.re }}"
         line: "{{ item.l }}"
@@ -98,19 +98,19 @@
         - restart auditd - suse
 
     - name: Check if grub is present
-      stat:
+      ansible.builtin.stat:
         path: /etc/default/grub
       register: hasgrub
     - block:
         - name: check if auditing present in grub config
-          command: "egrep '^GRUB_CMDLINE_LINUX=\".*audit=1.*\"' /etc/default/grub"
+          ansible.builtin.command: "egrep '^GRUB_CMDLINE_LINUX=\".*audit=1.*\"' /etc/default/grub"
           changed_when: false
           register: auditgrub
           ignore_errors: true
           check_mode: no
 
         - name: Enable Auditing in grub for Processes That Start Prior to auditd - CIS
-          replace:
+          ansible.builtin.replace:
             dest: /etc/default/grub
             regexp: '^GRUB_CMDLINE_LINUX="(.*)"'
             replace: 'GRUB_CMDLINE_LINUX="\1 audit=1 audit_backlog_limit=8192"'
@@ -120,7 +120,7 @@
         - auditd_grub_enable|bool
 
     - name: Enable and start auditd
-      service:
+      ansible.builtin.service:
         name: auditd
         state: started
         enabled: yes
@@ -129,7 +129,7 @@
       when: auditd_reporting
 
     - name: Set fact for monit
-      set_fact:
+      ansible.builtin.set_fact:
         monit_auditd: true
   when:
     - not (ansible_virtualization_type is defined and
@@ -140,17 +140,17 @@
 
 - block:
     - name: Disable auditd as osquery present with process auditing configured
-      service:
+      ansible.builtin.service:
         name: auditd
         state: stopped
         enabled: no
     - name: Set fact for monit
-      set_fact:
+      ansible.builtin.set_fact:
         monit_auditd: false
   when: osquery_process_auditing|bool
 
 - name: Debug | audisp_syslog_enable
-  debug: var=audisp_syslog_enable
+  ansible.builtin.debug: var=audisp_syslog_enable
 - import_tasks: rsyslog-audisp.yml
   when: audisp_syslog_enable|bool
 

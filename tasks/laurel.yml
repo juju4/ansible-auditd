@@ -1,20 +1,20 @@
 ---
 
 - name: Ensure archives folder exists
-  file:
+  ansible.builtin.file:
     dest: "{{ install_archives }}"
     state: directory
     mode: '0700'
 
 - name: Fetch laurel binary
-  get_url:
+  ansible.builtin.get_url:
     url: "{{ auditd_laurel_url }}"
     dest: "{{ install_archives }}/{{ auditd_laurel_url | basename }}"
     checksum: "{{ auditd_laurel_checksum | default(omit) }}"
     mode: '0644'
 
 - name: Unarchive laurel binary
-  unarchive:
+  ansible.builtin.unarchive:
     src: "{{ install_archives }}/{{ auditd_laurel_url | basename }}"
     dest: "/usr/local/sbin"
     mode: '0755'
@@ -23,26 +23,26 @@
     creates: "/usr/local/sbin/laurel"
 
 - name: Add laurel user
-  user:
+  ansible.builtin.user:
     name: "{{ auditd_laurel_user }}"
     home: /var/log/laurel
     create_home: yes
     system: yes
 
 - name: Ensure /etc/laurel directory exists
-  file:
+  ansible.builtin.file:
     path: /etc/laurel
     state: directory
     mode: '0755'
 
 - name: Set laurel configuration
-  template:
+  ansible.builtin.template:
     src: "{{ auditd_laurel_config }}"
     dest: /etc/laurel/config.toml
     mode: '0644'
 
 - name: Set laurel audit plugin configuration
-  template:
+  ansible.builtin.template:
     src: "{{ auditd_laurel_plugin }}"
     dest: /etc/audisp/plugins.d/laurel.conf
     mode: '0644'
@@ -51,13 +51,13 @@
     - restart auditd - rhel7+
 
 - name: Ensure laurel reporting script exists
-  template:
+  ansible.builtin.template:
     src: "{{ auditd_laurel_reporting_template }}.j2"
     dest: "/usr/local/scripts/{{ auditd_laurel_reporting_template | basename }}"
     mode: '0755'
 
 - name: add logrotate configuration for laurel log
-  template:
+  ansible.builtin.template:
     src: logrotate-laurel.j2
     dest: /etc/logrotate.d/laurel
     mode: '0644'

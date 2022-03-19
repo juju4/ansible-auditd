@@ -1,25 +1,25 @@
 ---
 
 - name: Ensure rsyslog is present
-  package:
+  ansible.builtin.package:
     name: rsyslog
     state: present
   register: pkg_result
   until: pkg_result is success
 
 - name: Gather package facts
-  package_facts:
+  ansible.builtin.package_facts:
     manager: auto
 
 - name: get rsyslog version
-  set_fact:
+  ansible.builtin.set_fact:
     rsyslog_v: "{{ ansible_facts.packages['rsyslog'][0]['version'] }}"
 
 - name: Debug | rsyslog version
-  debug: var=rsyslog_v verbosity=1
+  ansible.builtin.debug: var=rsyslog_v verbosity=1
 
 - name: Ensure base directory exists
-  file:
+  ansible.builtin.file:
     dest: "{{ audisp_syslog_target | dirname }}"
     state: directory
     mode: '0755'
@@ -30,7 +30,7 @@
     audisp_syslog_target|dirname != '/var/log'
 
 - name: setup rsyslog to send audisp logs to a specific target
-  template:
+  ansible.builtin.template:
     src: rsyslog-audispd.conf.j2
     dest: /etc/rsyslog.d/30-audispd.conf
     mode: '0644'
@@ -53,6 +53,6 @@
 
 # only if file, not if remote syslog
 - name: Debug | audisp_syslog_target
-  debug: var=audisp_syslog_target
+  ansible.builtin.debug: var=audisp_syslog_target
 - import_tasks: logrotate.yml
   when: "'/var/log/' in audisp_syslog_target"

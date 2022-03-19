@@ -1,9 +1,9 @@
 ---
 
 - name: Include OS family variables
-  include_vars: "{{ ansible_os_family }}.yml"
+  ansible.builtin.include_vars: "{{ ansible_os_family }}.yml"
 - name: Include Distribution family variables
-  include_vars: "{{ ansible_distribution }}.yml"
+  ansible.builtin.include_vars: "{{ ansible_distribution }}.yml"
   when: ansible_distribution == "Ubuntu"
 
 ## not supported by raspbian, https://github.com/raspberrypi/linux/issues/1352
