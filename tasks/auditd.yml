@@ -32,7 +32,7 @@
     - name: Check if /opt/BESClient exists
       ansible.builtin.stat:
         path: /opt/BESClient
-      register: BESClient
+      register: besclient
 
     - name: "create auditd rules {{ auditd_confdir }} directory"
       ansible.builtin.file:
