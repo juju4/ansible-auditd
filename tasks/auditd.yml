@@ -1,6 +1,7 @@
 ---
 
-- block:
+- name: Not in container
+  block:
     # https://github.com/lxc/lxd/issues/2004, only on xenial?
     - name: ensure auditd package is present
       ansible.builtin.package:
@@ -40,7 +41,8 @@
         state: directory
         mode: '0750'
 
-    - block:
+    - name: Check only manage configuration files
+      block:
         - name: list files in configuration dir
           ansible.builtin.command: "ls {{ auditd_confdir }}"
           failed_when: no
@@ -101,7 +103,8 @@
       ansible.builtin.stat:
         path: /etc/default/grub
       register: hasgrub
-    - block:
+    - name: Grub auditd
+      block:
         - name: check if auditing present in grub config
           ansible.builtin.command: "egrep '^GRUB_CMDLINE_LINUX=\".*audit=1.*\"' /etc/default/grub"
           changed_when: false
@@ -138,7 +141,8 @@
     - not osquery_process_auditing|bool
   tags: auditd
 
-- block:
+- name: Osquery auditd
+  block:
     - name: Disable auditd as osquery present with process auditing configured
       ansible.builtin.service:
         name: auditd
