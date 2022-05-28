@@ -4,9 +4,14 @@
 directory = "/var/log/laurel"
 # Drop privileges from root to this user
 user = "{{ auditd_laurel_user }}"
+# The periodical time window in seconds for status information to be printed to Syslog.
+# Status report includes the running version, config and parsing stats.
+# Default is 0 --> no status reports.
+statusreport-period = 0
 
 [auditlog]
-# Base file name for the JSONL-based log file
+# Base file name for the JSONL-based log file. Set to "-" to log to stdout. In this case
+# other log file related settings will be ignored.
 file = "audit.log"
 # Rotate when log file reaches this size (in bytes)
 size = {{ auditd_laurel_rotatesize }}
@@ -31,7 +36,26 @@ generations = 10
 # execve-argv = [ "array" ]
 execve-argv = [ "array", "string" ]
 
+[translate]
+
+# Perform translations of numeric values that can also be done by
+# auditd if configured with log_format=ENRICHED.
+
+# arch, syscall, sockaddr structures
+universal = false
+# UID, GID values
+user-db = false
+
 [enrich]
 
 # List of environment variables to log for every EXECVE event
 execve-env = [ "LD_PRELOAD", "LD_LIBRARY_PATH" ]
+
+[label-process]
+
+# When processes perform operations that result in audit records with
+# these attached keys, LAUREL will attach the key as a label to the
+# process:
+label-keys = [ "software_mgmt" ]
+# Subprocesses inherit these keys from their parent.
+propagate-labels = [ "software_mgmt" ]
