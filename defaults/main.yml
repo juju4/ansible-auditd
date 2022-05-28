@@ -137,7 +137,7 @@ auditd_conf_lineinfile:
   # rotate 10 times every 32MB. auditd does not support time rotation.
   - { re: '^max_log_file = .*', l: 'max_log_file = 32' }
   - { re: '^num_logs = .*', l: 'num_logs = 10' }
-  # avoid 'dispatch err (pipe full) event lost'
+  # avoid 'dispatch err (pipe full) event lost' - deprecated on RHEL8
   - { re: '^disp_qos = .*', l: 'disp_qos = lossless' }
 
 auditd_set_loginuid_immutable: true
