@@ -12,5 +12,8 @@
     prerotate
         test ! -x /usr/local/scripts/{{ auditd_laurel_reporting_template | basename }} || sudo -u {{ auditd_laurel_user }} /usr/local/scripts/{{ auditd_laurel_reporting_template | basename }} 2>&1 >/dev/null
     endscript
+    postrotate
+        pkill -u _laurel laurel
+    endscript
 {% endif %}
 }
