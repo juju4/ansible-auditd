@@ -18,7 +18,7 @@
 - name: Debug | rsyslog version
   ansible.builtin.debug: var=rsyslog_v verbosity=1
 
-- name: Ensure base directory exists
+- name: Ensure audispd base directory exists
   ansible.builtin.file:
     dest: "{{ audisp_syslog_target | dirname }}"
     state: directory
