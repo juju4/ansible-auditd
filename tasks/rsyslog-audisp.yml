@@ -48,8 +48,8 @@
     mode: '0640'
     backup: "{{ auditd_backup | default(false) }}"
   notify:
-    - restart auditd
-    - restart auditd - rhel7+
+    - Restart auditd
+    - Restart auditd - rhel7+
 
 # only if file, not if remote syslog
 - name: Debug | audisp_syslog_target
