@@ -47,8 +47,8 @@
     dest: /etc/audisp/plugins.d/laurel.conf
     mode: '0644'
   notify:
-    - restart auditd
-    - restart auditd - rhel7+
+    - Restart auditd
+    - Restart auditd - rhel7+
 
 - name: Ensure laurel reporting script exists
   ansible.builtin.template:
@@ -56,7 +56,7 @@
     dest: "/usr/local/scripts/{{ auditd_laurel_reporting_template | basename }}"
     mode: '0755'
 
-- name: add logrotate configuration for laurel log
+- name: Add logrotate configuration for laurel log
   ansible.builtin.template:
     src: logrotate-laurel.j2
     dest: /etc/logrotate.d/laurel

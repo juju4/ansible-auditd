@@ -7,7 +7,7 @@
   register: pkg_result
   until: pkg_result is success
 
-- name: add logrotate configuration for audispd log
+- name: Add logrotate configuration for audispd log
   ansible.builtin.template:
     src: logrotate-audispd.j2
     dest: /etc/logrotate.d/audispd

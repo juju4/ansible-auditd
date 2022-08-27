@@ -3,7 +3,7 @@
 - name: Not in container
   block:
     # https://github.com/lxc/lxd/issues/2004, only on xenial?
-    - name: ensure auditd package is present
+    - name: Ensure auditd package is present
       ansible.builtin.package:
         name: "{{ auditd_pkg }}"
         state: present
@@ -11,7 +11,7 @@
       register: pkg_result
       until: pkg_result is success
 
-    - name: retrieve suid/sgid files list
+    - name: Retrieve suid/sgid files list
       ansible.builtin.command: >
         find / ! \( -path {{ ' -prune -o -path '.join(auditd_sugid_ignored_paths) }} -prune \)
           -a -perm /u=s,g=s -type f
@@ -35,7 +35,7 @@
         path: /opt/BESClient
       register: besclient
 
-    - name: "create auditd rules {{ auditd_confdir }} directory"
+    - name: "Create auditd rules {{ auditd_confdir }} directory"
       ansible.builtin.file:
         path: "{{ auditd_confdir }}"
         state: directory
@@ -43,7 +43,7 @@
 
     - name: Check only manage configuration files
       block:
-        - name: list files in configuration dir
+        - name: List files in configuration dir
           ansible.builtin.command: "ls {{ auditd_confdir }}"
           failed_when: no
           changed_when: no
@@ -56,17 +56,17 @@
             name: "{{ auditd_confdir }}/{{ item }}"
             state: absent
           loop: "{{ confdir_files.stdout_lines }}"
-          when: item.replace('.rules','') not in auditd_rules_templates
+          when: item.replace('.rules', '') not in auditd_rules_templates
           tags: files
       when: auditd_manage_configuration_directory
 
-    - name: check is augenrules is present
+    - name: Check is augenrules is present
       ansible.builtin.stat:
         path: "/sbin/augenrules"
       register: augenrules_file
       changed_when: false
 
-    - name: configure audit system
+    - name: Configure audit system
       ansible.builtin.template:
         src: "{{ item }}.rules.j2"
         dest: "{{ auditd_confdir }}/{{ item }}.rules"
@@ -74,13 +74,13 @@
         backup: "{{ auditd_backup | default(false) }}"
       with_items: "{{ auditd_rules_templates }}"
       notify:
-        - augenrules
-        - restart auditd
-        - restart auditd - rhel7+
-        - restart auditd - suse
+        - Augenrules
+        - Restart auditd
+        - Restart auditd - rhel7+
+        - Restart auditd - suse
 
     # /sbin/augenrules isn't present to generate /etc/audit/audit.rules
-    - name: assemble rules into a single file
+    - name: Assemble rules into a single file
       ansible.builtin.assemble:
         src: "{{ auditd_confdir }}"
         dest: /etc/audit/audit.rules
@@ -95,9 +95,9 @@
         mode: '0640'
       with_items: "{{ auditd_conf_lineinfile | default([]) }}"
       notify:
-        - restart auditd
-        - restart auditd - rhel7+
-        - restart auditd - suse
+        - Restart auditd
+        - Restart auditd - rhel7+
+        - Restart auditd - suse
 
     - name: Check if grub is present
       ansible.builtin.stat:
@@ -105,7 +105,7 @@
       register: hasgrub
     - name: Grub auditd
       block:
-        - name: check if auditing present in grub config
+        - name: Check if auditing present in grub config
           ansible.builtin.command: "egrep '^GRUB_CMDLINE_LINUX=\".*audit=1.*\"' /etc/default/grub"
           changed_when: false
           register: auditgrub
@@ -138,7 +138,7 @@
     - not (ansible_virtualization_type is defined and
           (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")
         )
-    - not osquery_process_auditing|bool
+    - not osquery_process_auditing | bool
   tags: auditd
 
 - name: Osquery auditd
@@ -151,12 +151,12 @@
     - name: Set fact for monit
       ansible.builtin.set_fact:
         monit_auditd: false
-  when: osquery_process_auditing|bool
+  when: osquery_process_auditing | bool
 
 - name: Debug | audisp_syslog_enable
   ansible.builtin.debug: var=audisp_syslog_enable
 - import_tasks: rsyslog-audisp.yml
-  when: audisp_syslog_enable|bool
+  when: audisp_syslog_enable | bool
 
 - import_tasks: laurel.yml
-  when: auditd_laurel_enable|bool and ansible_architecture == 'x86_64'
+  when: auditd_laurel_enable | bool and ansible_architecture == 'x86_64'

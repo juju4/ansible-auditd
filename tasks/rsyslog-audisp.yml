@@ -11,7 +11,7 @@
   ansible.builtin.package_facts:
     manager: auto
 
-- name: get rsyslog version
+- name: Get rsyslog version
   ansible.builtin.set_fact:
     rsyslog_v: "{{ ansible_facts.packages['rsyslog'][0]['version'] }}"
 
@@ -25,11 +25,11 @@
     mode: '0755'
     owner: "{{ syslog_user }}"
     group: "{{ syslog_group | default('root') }}"
-  when: >
-    "'/var/log/' in audisp_syslog_target" and
-    audisp_syslog_target|dirname != '/var/log'
+  when:
+    - "'/var/log/' in audisp_syslog_target"
+    - audisp_syslog_target | dirname != '/var/log'
 
-- name: setup rsyslog to send audisp logs to a specific target
+- name: Setup rsyslog to send audisp logs to a specific target
   ansible.builtin.template:
     src: rsyslog-audispd.conf.j2
     dest: /etc/rsyslog.d/30-audispd.conf
@@ -37,7 +37,7 @@
     backup: "{{ auditd_backup | default(false) }}"
     validate: 'rsyslogd -N2 -f %s'
   notify:
-    - restart rsyslog
+    - Restart rsyslog
 
 - name: Ensure audis syslog plugin is enabled
   ini_file:
