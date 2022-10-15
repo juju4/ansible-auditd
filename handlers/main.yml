@@ -6,8 +6,8 @@
 
 - name: Restart auditd - suse
   ansible.builtin.systemd:
-      name: auditd
-      state: restarted
+    name: auditd
+    state: restarted
   when: >
     not (ansible_virtualization_type is defined and
           (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")
@@ -15,8 +15,8 @@
 
 - name: Restart auditd
   ansible.builtin.service:
-      name: auditd
-      state: restarted
+    name: auditd
+    state: restarted
   when: >
     not (ansible_virtualization_type is defined and
           (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")
@@ -30,9 +30,9 @@
 - name: Restart auditd - rhel7+
   ansible.builtin.command: "service auditd restart"  # noqa command-instead-of-module
   environment:
-      PATH: '/usr/sbin:/usr/bin:/sbin:/bin'
+    PATH: '/usr/sbin:/usr/bin:/sbin:/bin'
   args:
-      warn: False
+    warn: False
   when: >
     not (ansible_virtualization_type is defined and
           (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")
@@ -40,4 +40,6 @@
     (ansible_os_family == "RedHat" and ansible_distribution_major_version | int >= 7)
 
 - name: Restart rsyslog
-  ansible.builtin.service: name=rsyslog state=restarted
+  ansible.builtin.service:
+    name: rsyslog
+    state: restarted

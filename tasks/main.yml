@@ -8,7 +8,8 @@
 
 ## not supported by raspbian, https://github.com/raspberrypi/linux/issues/1352
 ## nok Alpine. package in edge@testing but 'Error - audit support not in kernel'
-- import_tasks: auditd.yml
+- name: Import auditd
+  ansible.builtin.import_tasks: auditd.yml
   when:
     - ansible_system == 'Linux'
     - not (ansible_distribution == "Debian" and ansible_architecture == "armv6l")

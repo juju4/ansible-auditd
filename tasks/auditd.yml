@@ -1,6 +1,12 @@
 ---
 
 - name: Not in container
+  when:
+    - not (ansible_virtualization_type is defined and
+          (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")
+        )
+    - not osquery_process_auditing | bool
+  tags: auditd
   block:
     # https://github.com/lxc/lxd/issues/2004, only on xenial?
     - name: Ensure auditd package is present
@@ -11,7 +17,7 @@
       register: pkg_result
       until: pkg_result is success
 
-    - name: Retrieve suid/sgid files list
+    - name: Retrieve suid/sgid files list  # noqa no-free-form
       ansible.builtin.command: >
         find / ! \( -path {{ ' -prune -o -path '.join(auditd_sugid_ignored_paths) }} -prune \)
           -a -perm /u=s,g=s -type f
@@ -35,13 +41,14 @@
         path: /opt/BESClient
       register: besclient
 
-    - name: "Create auditd rules {{ auditd_confdir }} directory"
+    - name: "Create auditd rules directory - {{ auditd_confdir }}"
       ansible.builtin.file:
         path: "{{ auditd_confdir }}"
         state: directory
         mode: '0750'
 
     - name: Check only manage configuration files
+      when: auditd_manage_configuration_directory
       block:
         - name: List files in configuration dir
           ansible.builtin.command: "ls {{ auditd_confdir }}"
@@ -58,7 +65,6 @@
           loop: "{{ confdir_files.stdout_lines }}"
           when: item.replace('.rules', '') not in auditd_rules_templates
           tags: files
-      when: auditd_manage_configuration_directory
 
     - name: Check is augenrules is present
       ansible.builtin.stat:
@@ -104,8 +110,11 @@
         path: /etc/default/grub
       register: hasgrub
     - name: Grub auditd
+      when:
+        - hasgrub.stat is defined and hasgrub.stat.exists
+        - auditd_grub_enable|bool
       block:
-        - name: Check if auditing present in grub config
+        - name: Check if auditing present in grub config  # noqa no-free-form
           ansible.builtin.command: "egrep '^GRUB_CMDLINE_LINUX=\".*audit=1.*\"' /etc/default/grub"
           changed_when: false
           register: auditgrub
@@ -118,9 +127,6 @@
             regexp: '^GRUB_CMDLINE_LINUX="(.*)"'
             replace: 'GRUB_CMDLINE_LINUX="\1 audit=1 audit_backlog_limit=8192"'
           when: not auditgrub.stdout
-      when:
-        - hasgrub.stat is defined and hasgrub.stat.exists
-        - auditd_grub_enable|bool
 
     - name: Enable and start auditd
       ansible.builtin.service:
@@ -128,20 +134,16 @@
         state: started
         enabled: yes
 
-    - import_tasks: reporting.yml
+    - name: Import reporting
+      ansible.builtin.import_tasks: reporting.yml
       when: auditd_reporting
 
     - name: Set fact for monit
       ansible.builtin.set_fact:
         monit_auditd: true
-  when:
-    - not (ansible_virtualization_type is defined and
-          (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")
-        )
-    - not osquery_process_auditing | bool
-  tags: auditd
 
 - name: Osquery auditd
+  when: osquery_process_auditing | bool
   block:
     - name: Disable auditd as osquery present with process auditing configured
       ansible.builtin.service:
@@ -151,12 +153,14 @@
     - name: Set fact for monit
       ansible.builtin.set_fact:
         monit_auditd: false
-  when: osquery_process_auditing | bool
 
 - name: Debug | audisp_syslog_enable
-  ansible.builtin.debug: var=audisp_syslog_enable
-- import_tasks: rsyslog-audisp.yml
+  ansible.builtin.debug:
+    var: audisp_syslog_enable
+- name: Import rsyslog-audisp
+  ansible.builtin.import_tasks: rsyslog-audisp.yml
   when: audisp_syslog_enable | bool
 
-- import_tasks: laurel.yml
+- name: Import laurel
+  ansible.builtin.import_tasks: laurel.yml
   when: auditd_laurel_enable | bool and ansible_architecture == 'x86_64'

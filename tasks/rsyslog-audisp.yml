@@ -16,7 +16,9 @@
     rsyslog_v: "{{ ansible_facts.packages['rsyslog'][0]['version'] }}"
 
 - name: Debug | rsyslog version
-  ansible.builtin.debug: var=rsyslog_v verbosity=1
+  ansible.builtin.debug:
+    var: rsyslog_v
+    verbosity: 1
 
 - name: Ensure audispd base directory exists
   ansible.builtin.file:
@@ -40,7 +42,7 @@
     - Restart rsyslog
 
 - name: Ensure audis syslog plugin is enabled
-  ini_file:
+  community.general.ini_file:
     path: /etc/audisp/plugins.d/syslog.conf
     section: null
     option: active
@@ -53,6 +55,8 @@
 
 # only if file, not if remote syslog
 - name: Debug | audisp_syslog_target
-  ansible.builtin.debug: var=audisp_syslog_target
-- import_tasks: logrotate.yml
+  ansible.builtin.debug:
+    var: audisp_syslog_target
+- name: Import logrotate
+  ansible.builtin.import_tasks: logrotate.yml
   when: "'/var/log/' in audisp_syslog_target"
