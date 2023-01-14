@@ -58,6 +58,8 @@ jobs:
       - uses: codespell-project/actions-codespell@master
         with:
           ignore_words_file: ${{ env.ANSIBLE_ROLE }}/.codespellignore
+          skip: .git
+          path: ${{ env.ANSIBLE_ROLE }}
         if: ${{ always() }}
       - name: yamllint
         run: |
