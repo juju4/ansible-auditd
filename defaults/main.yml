@@ -26,7 +26,7 @@ auditd_log_binaries_exec:
   - /usr/bin/python3
   - /usr/bin/ruby
 
-# This variable controls wether files not managed by this role will be purged
+# This variable controls whether files not managed by this role will be purged
 # from the rules configuration directory
 auditd_manage_configuration_directory: true
 
