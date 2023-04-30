@@ -1,6 +1,6 @@
 ---
 
-- name: Augenrules
+- name: Augenrules  # noqa no-changed-when
   ansible.builtin.command: augenrules
   when: augenrules_file.stat.exists
 
@@ -28,11 +28,9 @@
 
 ## https://groups.google.com/forum/#!topic/ansible-project/pv1h1Ne7nSk
 - name: Restart auditd - rhel7+
-  ansible.builtin.command: "service auditd restart"  # noqa command-instead-of-module
+  ansible.builtin.command: "service auditd restart"  # noqa command-instead-of-module no-changed-when
   environment:
     PATH: '/usr/sbin:/usr/bin:/sbin:/bin'
-  args:
-    warn: False
   when: >
     not (ansible_virtualization_type is defined and
           (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")

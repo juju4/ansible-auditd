@@ -1,8 +1,9 @@
 ---
 
-- hosts: all
+- name: Test integration playbook
+  hosts: all
   vars:
-    - auditd_exclusion_rules2: []
-    - audisp_syslog_enable: false
+    auditd_exclusion_rules2: []
+    audisp_syslog_enable: false
   roles:
     - juju4.auditd

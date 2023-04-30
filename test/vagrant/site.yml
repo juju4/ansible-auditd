@@ -1,5 +1,6 @@
 ---
 
-- hosts: vagrantselect
+- name: Test vagrant playbook
+  hosts: vagrantselect
   roles:
     - juju4.auditd
