@@ -4,6 +4,9 @@ osquery_process_auditing: false
 audisp_syslog_enable: true
 audisp_syslog_target: /var/log/audispd/audispd.log
 # audisp_syslog_target: @@remotesyslog
+auditd_plugins_folder: /etc/audisp/plugins.d
+# Change for auditd 3
+# auditd_plugins_folder: /etc/audit/plugins.d
 
 auditd_grub_enable: false
 

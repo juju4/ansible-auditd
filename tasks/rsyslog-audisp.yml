@@ -43,7 +43,7 @@
 
 - name: Ensure audis syslog plugin is enabled
   community.general.ini_file:
-    path: /etc/audisp/plugins.d/syslog.conf
+    path: "{{ auditd_plugins_folder }}/syslog.conf"
     section: null
     option: active
     value: 'yes'
