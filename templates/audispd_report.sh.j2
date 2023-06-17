@@ -16,6 +16,12 @@ echo "*** head"
 head -5 "${f}"
 echo
 
+{% if ansible_distribution == "Ubuntu" and ansible_distribution_major_version|int >= 22 %}
+cut_type_f=6
+cut_syscall_f=9
+cut_exe_f=31
+cut_keyword_f=32
+{% else %}
 #cut_type_f=8
 #cut_syscall_f=11
 #cut_exe_f=33
@@ -24,6 +30,7 @@ cut_type_f=7
 cut_syscall_f=10
 cut_exe_f=32
 cut_keyword_f=33
+{% endif %}
 
 echo "*** per type"
 cut -d ' ' -f "${cut_type_f}" "${f}" | sort | uniq -c | sort -nr | head -20
@@ -42,9 +49,12 @@ grep SYSCALL "${f}" | cut -d ' ' -f "${cut_keyword_f}" | sort | uniq -c | sort -
 echo "*** SYSCALL per syscall,exe,keyword"
 grep SYSCALL "${f}" | cut -d ' ' -f "${cut_syscall_f},${cut_exe_f},${cut_keyword_f}" | sort | uniq -c | sort -nr
 
-#cut_f="9,10,19,20,30,31,32"
+{% if ansible_distribution == "Ubuntu" and ansible_distribution_major_version|int >= 22 %}
+cut_f="9,10,19,20,30,31,32"
+{% else %}
 cut_f="10,11,20,21,31,32,33"
 #cut_f="11,12,21,22,32,33,35"
+{% endif %}
 echo "*** rootcmd"
 grep 'key="rootcmd"' "${f}" | cut -d ' ' -f $cut_f | sort | uniq -c | sort -nr | head -20
 echo "*** sigkill"
