@@ -63,6 +63,11 @@ auditd_exclusion_rules:
   # High Volume Event Filter (especially on Linux Workstations)
   - '-a never,exit -F arch=b32 -F dir=/dev/shm -k sharedmemaccess'
   - '-a never,exit -F arch=b64 -F dir=/dev/shm -k sharedmemaccess'
+  - '-a never,exit -F arch=b32 -F dir=/var/lock/lvm -k locklvm'
+  - '-a never,exit -F arch=b64 -F dir=/var/lock/lvm -k locklvm'
+  ## FileBeat
+  # - '-a never,exit -F arch=b32 -F path=/opt/filebeat -k filebeat'
+  # - '-a never,exit -F arch=b64 -F path=/opt/filebeat -k filebeat'
   # - '-a never,exit -F dir=/path/to/directory'
   # - '-a never,exit -F path=/path/to/file'
   # - '-a never,exit -F auid=<UID>'
