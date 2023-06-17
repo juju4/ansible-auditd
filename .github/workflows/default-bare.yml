@@ -58,6 +58,17 @@ jobs:
         run: |
           systemctl -l --no-pager status auditd
         if: env.WORKFLOW_CONCLUSION == 'failure'  # notify only if failure
+      - name: After script - systemd
+        run: |
+          set -x
+          systemctl status auditd -l --no-pager
+        continue-on-error: true
+      - name: After script - journalctl
+        run: |
+          set -x
+          journalctl -xe -l --no-pager -u auditd
+          journalctl -xe -l --no-pager | tail -200
+        continue-on-error: true
       - name: After script - rules
         run: |
           set -x
