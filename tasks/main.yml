@@ -5,6 +5,11 @@
 - name: Include Distribution family variables
   ansible.builtin.include_vars: "{{ ansible_distribution }}.yml"
   when: ansible_distribution == "Ubuntu"
+- name: Include Distribution version variables
+  ansible.builtin.include_vars: "{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml"
+  when:
+    - ansible_distribution == "Ubuntu"
+    - and ansible_distribution_major_version|int >= 22
 
 ## not supported by raspbian, https://github.com/raspberrypi/linux/issues/1352
 ## nok Alpine. package in edge@testing but 'Error - audit support not in kernel'

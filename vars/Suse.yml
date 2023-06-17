@@ -2,3 +2,4 @@
 auditd_pkg: audit
 
 syslog_user: root
+auditd_plugins: /etc/audisp/plugins.d

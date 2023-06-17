@@ -69,14 +69,16 @@ jobs:
         run: |
           set -x
           sudo cat /etc/laurel/config.toml
-          sudo cat /etc/audisp/plugins.d/laurel.conf
+          sudo cat /etc/audisp/plugins.d/laurel.conf || true
+          sudo cat /etc/audit/plugins.d/laurel.conf || true
           /usr/local/sbin/laurel -d -c /etc/laurel/config.toml; echo $?
         continue-on-error: true
       - name: After script - rsyslog
         run: |
           set -x
           cat /etc/rsyslog.d/30-audispd.conf
-          sudo cat /etc/audisp/plugins.d/syslog.conf
+          sudo cat /etc/audisp/plugins.d/syslog.conf || true
+          sudo cat /etc/audit/plugins.d/syslog.conf || true
           sleep 60
           sudo tail -100 /var/log/audit/audit.log
           sudo -u _laurel tail -100 /var/log/laurel/audit.log

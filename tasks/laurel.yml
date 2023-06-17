@@ -44,7 +44,7 @@
 - name: Set laurel audit plugin configuration
   ansible.builtin.template:
     src: "{{ auditd_laurel_plugin }}"
-    dest: /etc/audisp/plugins.d/laurel.conf
+    dest: "{{ auditd_plugins }}/laurel.conf"
     mode: '0644'
   notify:
     - Restart auditd
