@@ -41,6 +41,16 @@
         path: /opt/BESClient
       register: besclient
 
+    - name: Check if /etc/clustershell/clush.conf exists
+      ansible.builtin.stat:
+        path: /etc/clustershell/clush.conf
+      register: clush
+
+    - name: Check if /usr/bin/kubelet exists
+      ansible.builtin.stat:
+        path: /usr/bin/kubelet
+      register: kubelet
+
     - name: "Create auditd rules directory - {{ auditd_confdir }}"
       ansible.builtin.file:
         path: "{{ auditd_confdir }}"

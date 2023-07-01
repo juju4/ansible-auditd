@@ -187,11 +187,13 @@
 -a always,exit -F arch=b32 -S execve -F euid=33 -k detect_execve_www
 -a always,exit -F arch=b64 -S execve -F euid=33 -k detect_execve_www
 
+{% if clush is defined and clush.stat.exists %}
 ### https://clustershell.readthedocs.io/
 -w /bin/clush -p x -k susp_shell
 -w /usr/local/bin/clush -p x -k susp_shell
 -w /etc/clustershell/clush.conf -p x -k susp_shell
 
+{% endif %}
 ### https://github.com/tmux/tmux
 -w /bin/tmux -p x -k susp_shell
 -w /usr/local/bin/tmux -p x -k susp_shell
@@ -401,6 +403,7 @@
 -w /usr/local/bin/VBoxAutostart -p x -k T1497_Virtualization_Sandbox_Evasion_System_Checks
 -w /usr/local/bin/VBoxDTrace -p x -k T1497_Virtualization_Sandbox_Evasion_System_Checks
 -w /usr/local/bin/vbox-img -p x -k T1497_Virtualization_Sandbox_Evasion_System_Checks
+{% if ansible_distribution == 'MacOSX' %}
 -w /Library/LaunchDaemons/org.virtualbox.startup.plist -p x -k T1497_Virtualization_Sandbox_Evasion_System_Checks
 -w /Library/Application Support/VirtualBox/LaunchDaemons/ -p x -k T1497_Virtualization_Sandbox_Evasion_System_Checks
 -w /Library/Application Support/VirtualBox/VBoxDrv.kext/ -p x -k T1497_Virtualization_Sandbox_Evasion_System_Checks
@@ -427,9 +430,12 @@
 -w /usr/local/bin/qemu-nbd -p x -k T1497_Virtualization_Sandbox_Evasion_System_Checks
 -w /usr/local/bin/qemu-system-x86_64 -p x -k T1497_Virtualization_Sandbox_Evasion_System_Checks
 
+{% endif %}
+{% if kubelet is defined and kubelet.stat.exists %}
 ## Kubelet
 -w /usr/bin/kubelet -k kubelet
 
+{% endif %}
 # ipc system call
 # /usr/include/linux/ipc.h
 
