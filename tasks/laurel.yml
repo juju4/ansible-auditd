@@ -25,8 +25,8 @@
 - name: Add laurel user
   ansible.builtin.user:
     name: "{{ auditd_laurel_user }}"
-    home: /var/log/laurel
-    create_home: yes
+    home: /nonexistent
+    create_home: false
     system: yes
 
 - name: Ensure /etc/laurel directory exists
