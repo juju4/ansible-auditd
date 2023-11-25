@@ -2,3 +2,4 @@
 
 # auditd 3
 auditd_plugins: /etc/audit/plugins.d
+syslog_group: adm
