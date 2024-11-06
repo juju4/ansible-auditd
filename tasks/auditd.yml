@@ -169,7 +169,9 @@
     var: audisp_syslog_enable
 - name: Import rsyslog-audisp
   ansible.builtin.import_tasks: rsyslog-audisp.yml
-  when: audisp_syslog_enable | bool
+  when:
+    - audisp_syslog_enable | bool
+    - not (ansible_distribution == "Ubuntu" and ansible_distribution_major_version|int >= 24)
 
 - name: Import laurel
   ansible.builtin.import_tasks: laurel.yml
