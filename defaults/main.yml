@@ -153,8 +153,8 @@ audispd_reporting_dest: /var/tmp
 audispd_logrotate_days: 10
 
 auditd_laurel_enable: false
-auditd_laurel_version: v0.7.0
-auditd_laurel_url: "https://github.com/threathunters-io/laurel/releases/download/{{ auditd_laurel_version }}/laurel-{{ auditd_laurel_version }}-x86_64-musl.tar.gz"
+auditd_laurel_version: 0.7.0
+auditd_laurel_url: "https://github.com/threathunters-io/laurel/releases/download/v{{ auditd_laurel_version }}/laurel-{{ auditd_laurel_version }}-x86_64-musl.tar.gz"
 auditd_laurel_checksum: 'sha256:557943e99fb53adb6b11db1d7711a3c329ee0eca9fe5acca0f0cf2bb89065e1b'
 auditd_laurel_user: '_laurel'
 auditd_laurel_config: laurel.toml.j2
