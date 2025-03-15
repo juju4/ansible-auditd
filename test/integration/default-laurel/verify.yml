@@ -1,0 +1,112 @@
+---
+
+- name: Verify auditd
+  hosts: "{{ playbook_hosts | default('all') }}"
+  vars:
+    exec_file: /usr/sbin/auditd
+    cfg_file: /etc/audit/auditd.conf
+    rules_file: /etc/audit/audit.rules
+    processes:
+      - { u: root, p: auditd }
+    ports: []
+    is_container: false
+  pre_tasks:
+    - name: RedHat | Ensure ps and host are present
+      ansible.builtin.package:
+        name:
+          - procps-ng
+        state: present
+      when: ansible_os_family == "RedHat" and ansible_distribution_major_version | int >= 8
+    - name: Debian | Ensure ps and host present
+      ansible.builtin.package:
+        name:
+          - procps
+        state: present
+      when: ansible_os_family == "Debian"
+    - name: Debug | var ansible_virtualization_type
+      ansible.builtin.debug:
+        var: ansible_virtualization_type
+    - name: Set fact is_container
+      ansible.builtin.set_fact:
+        is_container: true
+      when: >
+        (ansible_virtualization_type is defined and
+          (ansible_virtualization_type == "docker"
+           or ansible_virtualization_type == "containerd"
+           or ansible_virtualization_type == "container"
+          )
+        )
+  tasks:
+    - name: Check executable
+      ansible.builtin.stat:
+        path: "{{ exec_file }}"
+      register: bin1
+      become: yes
+    - name: Validate executable is present
+      ansible.builtin.assert:
+        that:
+          - bin1.stat.exists and bin1.stat.size != 0 and bin1.stat.mode == '0755'
+
+    - name: Check binary is functional
+      ansible.builtin.command:
+        cmd: "{{ exec_file }} --help"
+      register: run
+      changed_when: false
+      failed_when: false
+    - name: Validate run output
+      ansible.builtin.assert:
+        that:
+          - "'Usage: auditd ' in run.stderr"
+
+    - name: Check config
+      ansible.builtin.stat:
+        path: "{{ cfg_file }}"
+      register: cfg1
+      become: yes
+    - name: Validate config is present
+      ansible.builtin.assert:
+        that:
+          - cfg1.stat.exists and cfg1.stat.size != 0
+
+    - name: Check rules
+      ansible.builtin.stat:
+        path: "{{ rules_file }}"
+      register: rules1
+      become: yes
+    - name: Validate rules is present
+      ansible.builtin.assert:
+        that:
+          - rules1.stat.exists and rules1.stat.size != 0
+
+    - name: Check all processes
+      ansible.builtin.command: ps aux
+      changed_when: false
+      register: psa
+    - name: Debug | ps aux output
+      ansible.builtin.debug:
+        var: psa
+        verbosity: 1
+
+    - name: Ensure processes are running
+      ansible.builtin.command:
+        cmd: "pgrep -u {{ item.u }} {{ item.p }}"
+      register: ps
+      changed_when: false
+      failed_when: false
+      loop: "{{ processes }}"
+    - name: Validate ps output
+      ansible.builtin.assert:
+        that:
+          - item.stdout | length > 0
+      loop: "{{ ps.results }}"
+      when:
+        - not is_container|bool
+
+    - name: Ensure ports are listening
+      ansible.builtin.wait_for:
+        host: "{{ item.h }}"
+        port: "{{ item.p }}"
+        timeout: 10
+      with_items: "{{ ports }}"
+      when:
+        - not is_container|bool
