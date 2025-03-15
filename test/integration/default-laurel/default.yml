@@ -1,0 +1,12 @@
+---
+
+- name: Test integration playbook
+  hosts: all
+  vars:
+    auditd_exclusion_rules2: []
+    auditd_log_all_execve: true
+    auditd_log_all_connect: true
+    auditd_log_all_socket: true
+    auditd_laurel_enable: true
+  roles:
+    - juju4.auditd
