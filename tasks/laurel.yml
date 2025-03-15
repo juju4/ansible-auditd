@@ -13,6 +13,11 @@
     checksum: "{{ auditd_laurel_checksum | default(omit) }}"
     mode: '0644'
 
+- name: Ensure Unarchive tools are present
+  ansible.builtin.package:
+    name: ['tar', 'gzip']
+    state: present
+
 - name: Unarchive laurel binary
   ansible.builtin.unarchive:
     src: "{{ install_archives }}/{{ auditd_laurel_url | basename }}"
