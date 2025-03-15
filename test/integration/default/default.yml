@@ -7,6 +7,5 @@
     auditd_log_all_execve: true
     auditd_log_all_connect: true
     auditd_log_all_socket: true
-    auditd_laurel_enable: true
   roles:
     - juju4.auditd
