@@ -6,26 +6,61 @@
     state: directory
     mode: '0700'
 
-- name: Fetch laurel binary
-  ansible.builtin.get_url:
-    url: "{{ auditd_laurel_url }}"
-    dest: "{{ install_archives }}/{{ auditd_laurel_url | basename }}"
-    checksum: "{{ auditd_laurel_checksum | default(omit) }}"
-    mode: '0644'
+- name: Download
+  block:
+    - name: Fetch laurel binary
+      ansible.builtin.get_url:
+        url: "{{ auditd_laurel_url }}"
+        dest: "{{ install_archives }}/{{ auditd_laurel_url | basename }}"
+        checksum: "{{ auditd_laurel_checksum | default(omit) }}"
+        mode: '0644'
+  rescue:
+    - name: Fetch laurel binary on orchestrator
+      ansible.builtin.get_url:
+        url: "{{ auditd_laurel_url }}"
+        dest: "/tmp/{{ auditd_laurel_url | basename }}"
+        checksum: "{{ auditd_laurel_checksum | default(omit) }}"
+        mode: '0644'
+      delegate_to: localhost
+    - name: Copy laurel binary
+      ansible.builtin.copy:
+        src: "/tmp/{{ auditd_laurel_url | basename }}"
+        dest: "{{ install_archives }}/{{ auditd_laurel_url | basename }}"
+        mode: '0644'
 
 - name: Ensure Unarchive tools are present
   ansible.builtin.package:
     name: ['tar', 'gzip']
     state: present
 
-- name: Unarchive laurel binary
-  ansible.builtin.unarchive:
-    src: "{{ install_archives }}/{{ auditd_laurel_url | basename }}"
-    dest: "/usr/local/sbin"
-    mode: '0755'
-    remote_src: yes
-    include: laurel
-    creates: "/usr/local/sbin/laurel"
+- name: Unarchive
+  block:
+    - name: Unarchive laurel binary
+      ansible.builtin.unarchive:
+        src: "{{ install_archives }}/{{ auditd_laurel_url | basename }}"
+        dest: "/usr/local/sbin"
+        mode: '0755'
+        remote_src: yes
+        include: laurel
+        creates: "/usr/local/sbin/laurel"
+  rescue:
+    # FIXME! ansible bug when using include
+    - name: Unarchive laurel binary without include
+      ansible.builtin.unarchive:
+        src: "{{ install_archives }}/{{ auditd_laurel_url | basename }}"
+        dest: "/tmp/{{ auditd_laurel_url | basename | regex_replace('.tar.gz$', '') }}"
+        mode: '0755'
+        remote_src: true
+    - name: Copy laurel to sbin
+      ansible.builtin.copy:
+        src: "/tmp/{{ auditd_laurel_url | basename | regex_replace('.tar.gz$', '') }}/bin/{{ item }}"
+        dest: "/usr/local/sbin/{{ item }}"
+        mode: '0755'
+        owner: root
+        remote_src: true
+      loop:
+        - laurel
+        - laurel2audit
 
 - name: Add laurel user
   ansible.builtin.user:
