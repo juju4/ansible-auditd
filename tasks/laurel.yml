@@ -61,6 +61,12 @@
       loop:
         - laurel
         - laurel2audit
+    - name: Ensure /tmp permissions are 1777
+      ansible.builtin.file:
+        path: "/tmp"
+        mode: '1777'
+        owner: root
+        group: root
 
 - name: Add laurel user
   ansible.builtin.user:
