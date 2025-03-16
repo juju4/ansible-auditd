@@ -48,7 +48,7 @@
     - name: Unarchive laurel binary without include
       ansible.builtin.unarchive:
         src: "{{ install_archives }}/{{ auditd_laurel_url | basename }}"
-        dest: "/tmp/{{ auditd_laurel_url | basename | regex_replace('.tar.gz$', '') }}"
+        dest: "/tmp"
         mode: '0755'
         remote_src: true
     - name: Copy laurel to sbin
