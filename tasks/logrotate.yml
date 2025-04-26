@@ -12,4 +12,5 @@
     src: logrotate-audispd.j2
     dest: /etc/logrotate.d/audispd
     mode: '0644'
+    owner: root
     validate: 'logrotate -dv %s'
