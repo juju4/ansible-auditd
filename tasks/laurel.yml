@@ -14,6 +14,8 @@
         dest: "{{ install_archives }}/{{ auditd_laurel_url | basename }}"
         checksum: "{{ auditd_laurel_checksum | default(omit) }}"
         mode: '0644'
+      register: dl_result
+      until: dl_result is success
   rescue:
     - name: Fetch laurel binary on orchestrator
       ansible.builtin.get_url:
@@ -22,6 +24,8 @@
         checksum: "{{ auditd_laurel_checksum | default(omit) }}"
         mode: '0644'
       delegate_to: localhost
+      register: dl_result
+      until: dl_result is success
     - name: Copy laurel binary
       ansible.builtin.copy:
         src: "/tmp/{{ auditd_laurel_url | basename }}"
