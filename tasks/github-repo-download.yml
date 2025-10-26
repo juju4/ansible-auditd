@@ -1,0 +1,31 @@
+---
+# https://docs.github.com/en/rest/releases/releases?apiVersion=2022-11-28
+# input vars: gh_repo=owner/repo, gh_release, gh_json_query
+
+- name: Get release information from Github API
+  ansible.builtin.uri:
+    url: "https://api.github.com/repos/{{ gh_repo }}/releases/{{ gh_release | default('latest') }}"
+    return_content: true
+  environment:
+    http_proxy: "{{ proxy_url | default(omit) }}"
+  register: gh_info
+  until: gh_info is success
+  changed_when: false
+
+- name: Set fact
+  ansible.builtin.set_fact:
+    gh_dl_url: "{{ gh_info.json | community.general.json_query(gh_json_query) | first }}"
+
+- name: Debug | target download url
+  ansible.builtin.debug:
+    var: gh_dl_url
+
+- name: Download archive
+  ansible.builtin.get_url:
+    url: "{{ gh_dl_url }}"
+    dest: "{{ install_archives }}/{{ gh_dl_url | basename }}"
+    mode: '0600'
+  environment:
+    http_proxy: "{{ proxy_url | default(omit) }}"
+  register: dl
+  until: dl is success

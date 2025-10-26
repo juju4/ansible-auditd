@@ -8,6 +8,14 @@
 
 - name: Download
   block:
+    - name: Import Github repo release download
+      ansible.builtin.import_tasks: github-repo-download.yml
+      vars:
+        gh_repo: "{{ audit_laurel_repo }}"
+        gh_release: "tag/{{ audit_laurel_github_version }}"
+        gh_json_query: "assets[?ends_with(browser_download_url, 'x86_64-glibc.tar.gz')].browser_download_url"
+      when:
+        - audit_laurel_dl_github | bool
     - name: Fetch laurel binary
       ansible.builtin.get_url:
         url: "{{ auditd_laurel_url }}"
@@ -16,6 +24,8 @@
         mode: '0644'
       register: dl_result
       until: dl_result is success
+      when:
+        - not audit_laurel_dl_github | bool
   rescue:
     - name: Fetch laurel binary on orchestrator
       ansible.builtin.get_url:
