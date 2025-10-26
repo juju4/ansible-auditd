@@ -12,7 +12,7 @@
       ansible.builtin.import_tasks: github-repo-download.yml
       vars:
         gh_repo: "{{ auditd_laurel_repo }}"
-        gh_release: "tag/{{ auditd_laurel_github_version }}"
+        gh_release: "tags/{{ auditd_laurel_github_version }}"
         gh_json_query: "assets[?ends_with(browser_download_url, 'x86_64-glibc.tar.gz')].browser_download_url"
       when:
         - auditd_laurel_dl_github | bool
