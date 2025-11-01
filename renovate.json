@@ -20,7 +20,6 @@
     },
     {
       "matchManagers": [
-        "github-actions",
         "docker",
         "custom.regex",
         "ansible",
