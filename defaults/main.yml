@@ -154,7 +154,7 @@ audispd_logrotate_days: 10
 
 auditd_laurel_enable: false
 # renovate: datasource=github-releases depName=threathunters-io/laurel
-auditd_laurel_github_version: 'v0.7.0'
+auditd_laurel_github_version: 'v0.7.3'
 auditd_laurel_dl_github: true
 auditd_laurel_repo: threathunters-io/laurel
 auditd_laurel_version: "{{ auditd_laurel_github_version | regex_replace('^v', '') }}"
