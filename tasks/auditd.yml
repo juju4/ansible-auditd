@@ -2,8 +2,8 @@
 
 - name: Not in container
   when:
-    - not (ansible_virtualization_type is defined and
-          (ansible_virtualization_type == "lxc" or ansible_virtualization_type == "docker")
+    - not (ansible_facts['virtualization_type'] is defined and
+          (ansible_facts['virtualization_type'] == "lxc" or ansible_facts['virtualization_type'] == "docker")
         )
     - not osquery_process_auditing | bool
   tags: auditd
@@ -171,8 +171,8 @@
   ansible.builtin.import_tasks: rsyslog-audisp.yml
   when:
     - audisp_syslog_enable | bool
-    - not (ansible_distribution == "Ubuntu" and ansible_distribution_major_version|int >= 24)
+    - not (ansible_facts['distribution'] == "Ubuntu" and ansible_facts['distribution_major_version']|int >= 24)
 
 - name: Import laurel
   ansible.builtin.import_tasks: laurel.yml
-  when: auditd_laurel_enable | bool and ansible_architecture == 'x86_64'
+  when: auditd_laurel_enable | bool and ansible_facts['architecture'] == 'x86_64'

@@ -7,30 +7,30 @@
 #?-a exit,always -F arch=b32 -S socketcall -k listen_call
 ## FIXME! some system: 'Syscall name unknown: listen'
 #-a exit,always -F arch=b32 -S listen -k listen_call
-{% if ansible_userspace_bits == '64' %}
+{% if ansible_facts['userspace_bits'] == '64' %}
 -a exit,always -F arch=b64 -S listen -k listen_call
 {% endif %}
 
 # suspicious x86 syscalls
-{% if ansible_architecture != "armv7l" %}
+{% if ansible_facts['architecture'] != "armv7l" %}
 -a exit,always -F arch=b32 -S ioperm -S modify_ldt -k suspicious_syscalls
 {% else %}
 -a exit,always -F arch=b32 -S ioperm -k suspicious_syscalls
 {% endif %}
-{% if ansible_userspace_bits == '64' %}
+{% if ansible_facts['userspace_bits'] == '64' %}
 -a exit,always -F arch=b64 -S ioperm -S modify_ldt -k suspicious_syscalls
 {% endif %}
 # uncommon and dangerous syscalls
-{% if ansible_architecture != "armv7l" %}
+{% if ansible_facts['architecture'] != "armv7l" %}
 -a exit,always -F arch=b32 -S get_kernel_syms -S ptrace -k uncommon_syscalls
 {% else %}
 -a exit,always -F arch=b32 -S ptrace -k uncommon_syscalls
 {% endif %}
-{% if ansible_userspace_bits == '64' %}
+{% if ansible_facts['userspace_bits'] == '64' %}
 -a exit,always -F arch=b64 -S get_kernel_syms -S ptrace -k uncommon_syscalls
 {% endif %}
 -a exit,always -F arch=b32 -S prctl -k uncommon_syscalls
-{% if ansible_userspace_bits == '64' %}
+{% if ansible_facts['userspace_bits'] == '64' %}
 -a exit,always -F arch=b64 -S prctl -k uncommon_syscalls
 {% endif %}
 
@@ -40,7 +40,7 @@
 {% if auditd_log_all_execve %}
 # Log all executed commands (larger than just root, above)
 -a exit,always -F arch=b32 -S execve -k execve_call
-{% if ansible_userspace_bits == '64' %}
+{% if ansible_facts['userspace_bits'] == '64' %}
 -a exit,always -F arch=b64 -S execve -k execve_call
 {% endif %}
 
@@ -65,34 +65,34 @@
 {% if auditd_log_all_connect %}
 # Log all connect (should include socket()) = 'Syscall name unknown: connect'
 -a exit,always -F arch=b32 -S connect -k connect_call
-{% if ansible_userspace_bits == '64' %}
+{% if ansible_facts['userspace_bits'] == '64' %}
 -a exit,always -F arch=b64 -S connect -k connect_call
 {% endif %}
 
 {% endif %}
 {% if auditd_log_all_socket %}
 # Log sockets, only the one succeeding
-{% if ansible_userspace_bits == '64' %}
+{% if ansible_facts['userspace_bits'] == '64' %}
 -a exit,always -F arch=b64 -F success=1 -S socket -k socket_call
 {% endif %}
 # socket(PF_INET, SOCK_STREAM, x) (ipv4/tcp)
 -a exit,always -F arch=b32 -F a0=2 -F a1=1 -S socket -k socket_call_ipv4_tcp
-{% if ansible_userspace_bits == '64' %}
+{% if ansible_facts['userspace_bits'] == '64' %}
 -a exit,always -F arch=b64 -F a0=2 -F a1=1 -S socket -k socket_call_ipv4_tcp
 {% endif %}
 # socket(PF_INET, SOCK_DGRAM, x) (ipv4/udp)
 -a exit,always -F arch=b32 -F a0=2 -F a1=2 -S socket -k socket_call_ipv4_udp
-{% if ansible_userspace_bits == '64' %}
+{% if ansible_facts['userspace_bits'] == '64' %}
 -a exit,always -F arch=b64 -F a0=2 -F a1=2 -S socket -k socket_call_ipv4_udp
 {% endif %}
 # socket(PF_INET6, SOCK_STREAM, x) (ipv6/tcp)
 -a exit,always -F arch=b32 -F a0=10 -F a1=1 -S socket -k socket_call_ipv6_tcp
-{% if ansible_userspace_bits == '64' %}
+{% if ansible_facts['userspace_bits'] == '64' %}
 -a exit,always -F arch=b64 -F a0=10 -F a1=1 -S socket -k socket_call_ipv6_tcp
 {% endif %}
 # socket(PF_INET6, SOCK_DGRAM, x) (ipv6/udp)
 -a exit,always -F arch=b32 -F a0=10 -F a1=2 -S socket -k socket_call_ipv6_udp
-{% if ansible_userspace_bits == '64' %}
+{% if ansible_facts['userspace_bits'] == '64' %}
 -a exit,always -F arch=b64 -F a0=10 -F a1=2 -S socket -k socket_call_ipv6_udp
 {% endif %}
 
@@ -104,15 +104,15 @@
 
 # Audit sigkill usage
 # http://unixadminschool.com/blog/2014/06/linux-admin-reference-configuring-auditd-in-redhat-enterprise-linux/
-{% if ansible_userspace_bits == '64' %}
+{% if ansible_facts['userspace_bits'] == '64' %}
 -a exit,always -F arch=b64 -S kill -k sigkill
 {% endif %}
 -a exit,always -F arch=b32 -S kill -k sigkill
-{% if ansible_userspace_bits == '64' %}
+{% if ansible_facts['userspace_bits'] == '64' %}
 -a exit,always -F arch=b64 -S tkill -k sigkill
 {% endif %}
 -a exit,always -F arch=b32 -S tkill -k sigkill
-{% if ansible_userspace_bits == '64' %}
+{% if ansible_facts['userspace_bits'] == '64' %}
 -a exit,always -F arch=b64 -S tgkill -k sigkill
 {% endif %}
 -a exit,always -F arch=b32 -S tgkill -k sigkill

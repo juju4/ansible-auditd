@@ -16,7 +16,7 @@ echo "*** head"
 head -5 "${f}"
 echo
 
-{% if ansible_distribution == "Ubuntu" and ansible_distribution_major_version|int >= 22 %}
+{% if ansible_facts['distribution'] == "Ubuntu" and ansible_facts['distribution_major_version']|int >= 22 %}
 cut_type_f=6
 cut_syscall_f=9
 cut_exe_f=31
@@ -49,7 +49,7 @@ grep SYSCALL "${f}" | cut -d ' ' -f "${cut_keyword_f}" | sort | uniq -c | sort -
 echo "*** SYSCALL per syscall,exe,keyword"
 grep SYSCALL "${f}" | cut -d ' ' -f "${cut_syscall_f},${cut_exe_f},${cut_keyword_f}" | sort | uniq -c | sort -nr
 
-{% if ansible_distribution == "Ubuntu" and ansible_distribution_major_version|int >= 22 %}
+{% if ansible_facts['distribution'] == "Ubuntu" and ansible_facts['distribution_major_version']|int >= 22 %}
 cut_f="9,10,19,20,30,31,32"
 {% else %}
 cut_f="10,11,20,21,31,32,33"

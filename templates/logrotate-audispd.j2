@@ -10,7 +10,7 @@
     sharedscripts
 {% if auditd_reporting %}
     prerotate
-        test ! -x /usr/local/scripts/{{ audispd_reporting_template | basename }} || {% if ansible_distribution == 'Ubuntu' %}sudo -u {{ syslog_user }} {% endif %}/usr/local/scripts/{{ audispd_reporting_template | basename }} 2>&1 | {% if ansible_distribution == 'Ubuntu' %}sudo -u {{ syslog_user }} {% endif %}tee {{ audispd_reporting_dest }}/audispd-report-`date +%Y%m%d` >/dev/null
+        test ! -x /usr/local/scripts/{{ audispd_reporting_template | basename }} || {% if ansible_facts['distribution'] == 'Ubuntu' %}sudo -u {{ syslog_user }} {% endif %}/usr/local/scripts/{{ audispd_reporting_template | basename }} 2>&1 | {% if ansible_facts['distribution'] == 'Ubuntu' %}sudo -u {{ syslog_user }} {% endif %}tee {{ audispd_reporting_dest }}/audispd-report-`date +%Y%m%d` >/dev/null
     endscript
 {% endif %}
 }

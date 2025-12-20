@@ -4,7 +4,7 @@ check process auditd
   with pidfile "/var/run/auditd.pid"
   group system
   group auditd
-{% if ansible_service_mgr == 'systemd' %}
+{% if ansible_facts['service_mgr'] == 'systemd' %}
   start program = "/bin/systemctl start ssh" with timeout 60 seconds
   stop program  = "/bin/systemctl stop ssh"
 {% else %}
