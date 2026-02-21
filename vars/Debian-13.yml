@@ -1,0 +1,8 @@
+---
+
+auditd_pkg: auditd
+
+syslog_user: root
+syslog_group: adm
+# https://manpages.debian.org/trixie/auditd/auditd-plugins.5.en.html
+auditd_plugins: /etc/audit/plugins.d

@@ -8,8 +8,8 @@
 - name: Include Distribution version variables
   ansible.builtin.include_vars: "{{ ansible_facts['distribution'] }}-{{ ansible_facts['distribution_major_version'] }}.yml"
   when:
-    - ansible_facts['distribution'] == "Ubuntu"
-    - ansible_facts['distribution_major_version']|int >= 22
+    - (ansible_facts['distribution'] == "Ubuntu" and ansible_facts['distribution_major_version']|int >= 22) or
+      (ansible_facts['distribution'] == "Debian" and ansible_facts['distribution_major_version']|int >= 13)
 
 ## not supported by raspbian, https://github.com/raspberrypi/linux/issues/1352
 ## nok Alpine. package in edge@testing but 'Error - audit support not in kernel'
