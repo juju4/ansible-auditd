@@ -121,4 +121,5 @@
     src: logrotate-laurel.j2
     dest: /etc/logrotate.d/laurel
     mode: '0644'
+    owner: root
     validate: 'logrotate -dv %s'
